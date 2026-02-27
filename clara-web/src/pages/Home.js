@@ -239,6 +239,7 @@ export default function Home() {
   }).slice(0, 5)
 
   const nombre = perfil?.nombre || user?.email?.split('@')[0] || 'tú'
+  const fotoUrl = perfil?.foto_url || null
   const avatar = perfil?.avatar_emoji || '👤'
 
   const formatCiclo = (d) => d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })
@@ -289,9 +290,9 @@ export default function Home() {
                   onClick={() => showToast('🔔 Sin notificaciones nuevas')}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 </div>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, cursor: 'pointer' }}
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, cursor: 'pointer', overflow: 'hidden' }}
                   onClick={() => navigate('/perfil')} title="Ver perfil">
-                  {avatar}
+                  {fotoUrl ? <img src={fotoUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
                 </div>
               </div>
             </div>
@@ -459,7 +460,9 @@ export default function Home() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 12, color: C.text2 }}>{nombre}</span>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer' }} onClick={() => navigate('/perfil')} title="Ver perfil">{avatar}</div>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }} onClick={() => navigate('/perfil')} title="Ver perfil">
+                {fotoUrl ? <img src={fotoUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
+              </div>
             </div>
           </div>
 

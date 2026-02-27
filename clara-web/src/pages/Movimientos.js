@@ -239,6 +239,7 @@ export default function Movimientos() {
   const ciclo = getCycleInfo(perfil?.ciclo_dia_inicio || 1, perfil?.ciclo_duracion_dias || 30)
   const formatCiclo = (d) => d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })
   const nombre = perfil?.nombre || '—'
+  const fotoUrl = perfil?.foto_url || null
   const avatar = perfil?.avatar_emoji || '👤'
 
   const FILTROS = [
@@ -410,7 +411,9 @@ export default function Movimientos() {
                 <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active ? C.blue : C.text2, cursor: 'pointer', border: active ? `1px solid rgba(96,165,250,0.2)` : 'none', background: active ? 'rgba(96,165,250,0.07)' : 'none', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
               ))}
             </div>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13 }}>{avatar}</div>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, overflow: 'hidden', cursor: 'pointer' }} onClick={() => navigate('/perfil')}>
+              {fotoUrl ? <img src={fotoUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
+            </div>
           </div>
 
           {/* Balance hero */}
