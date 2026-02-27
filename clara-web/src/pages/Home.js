@@ -290,7 +290,7 @@ export default function Home() {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 </div>
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, cursor: 'pointer' }}
-                  onClick={handleSignOut} title="Cerrar sesión">
+                  onClick={() => navigate('/perfil')} title="Ver perfil">
                   {avatar}
                 </div>
               </div>
@@ -459,7 +459,7 @@ export default function Home() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 12, color: C.text2 }}>{nombre}</span>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer' }} onClick={handleSignOut} title="Cerrar sesión">{avatar}</div>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer' }} onClick={() => navigate('/perfil')} title="Ver perfil">{avatar}</div>
             </div>
           </div>
 
