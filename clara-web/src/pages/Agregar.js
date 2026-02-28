@@ -46,6 +46,12 @@ export default function Agregar() {
   const [cuotaMensual, setCuotaMensual] = useState('')
   const [cuotasTotales, setCuotasTotales] = useState('')
   const [diaPago, setDiaPago] = useState('')
+  const [montoPagado, setMontoPagado] = useState('')
+  // Custom category
+  const [showNewCat, setShowNewCat] = useState(false)
+  const [newCatEmoji, setNewCatEmoji] = useState('📌')
+  const [newCatNombre, setNewCatNombre] = useState('')
+  const [savingCat, setSavingCat] = useState(false)
   // Data
   const [categorias, setCategorias] = useState([])
   const [metodos, setMetodos] = useState([])
@@ -57,6 +63,37 @@ export default function Agregar() {
   const RATE = 4500
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2600) }
+
+  function fmtMoney(raw, cur) {
+    const digits = String(raw).replace(/[^\d]/g, '')
+    if (!digits) return ''
+    const num = parseInt(digits, 10)
+    return num.toLocaleString(cur === 'USD' ? 'en-US' : 'es-CO')
+  }
+  function handleMoney(rawValue, setter) {
+    setter(rawValue.replace(/[^\d]/g, ''))
+  }
+  function rawToNum(raw) { return parseFloat(String(raw).replace(/[^\d]/g, '')) || 0 }
+
+  async function guardarCategoria() {
+    if (!newCatNombre.trim() || !user) return
+    setSavingCat(true)
+    const { data, error } = await supabase.from('categorias').insert({
+      nombre: newCatNombre.trim(),
+      emoji: newCatEmoji || '📌',
+      tipo: tipo === 'deuda' ? 'deuda' : tipo,
+      es_global: false,
+      usuario_id: user.id,
+    }).select().single()
+    setSavingCat(false)
+    if (error) { showToast('❌ Error al crear categoría'); return }
+    setCategorias(prev => [...prev, data])
+    setCatId(data.id)
+    setShowNewCat(false)
+    setNewCatNombre('')
+    setNewCatEmoji('📌')
+    showToast('✅ Categoría creada')
+  }
 
   useEffect(() => {
     async function init() {
@@ -82,7 +119,7 @@ export default function Agregar() {
     return c.tipo === 'deuda'
   })
 
-  const montoNum = parseFloat(monto) || 0
+  const montoNum = rawToNum(monto)
   const montoCOP = currency === 'USD' ? montoNum * RATE : montoNum
   const montoUSD = currency === 'COP' ? montoNum / RATE : montoNum
 
@@ -93,10 +130,10 @@ export default function Agregar() {
       const { error } = await supabase.from('deudas').insert({
         usuario_id: user.id,
         nombre: deudaNombre,
-        monto_total_cop: parseFloat(montoTotal),
-        cuota_mensual_cop: parseFloat(cuotaMensual),
+        monto_total_cop: rawToNum(montoTotal),
+        cuota_mensual_cop: rawToNum(cuotaMensual),
         cuotas_totales: parseInt(cuotasTotales) || 1,
-        monto_pagado_cop: 0,
+        monto_pagado_cop: rawToNum(montoPagado),
         dia_pago: parseInt(diaPago) || null,
         activa: true,
       })
@@ -155,7 +192,7 @@ export default function Agregar() {
           {tipo === 'gasto' ? '¡Gasto guardado!' : tipo === 'ingreso' ? '¡Ingreso registrado!' : '¡Deuda registrada!'}
         </div>
         <div style={{ fontSize: 32, fontWeight: 700, color: tipoColor, marginBottom: 8 }}>
-          {tipo !== 'deuda' ? `$${Math.round(montoCOP).toLocaleString('es-CO')}` : `$${parseFloat(montoTotal || 0).toLocaleString('es-CO')}`}
+          {tipo !== 'deuda' ? `$${Math.round(montoCOP).toLocaleString('es-CO')}` : `$${rawToNum(montoTotal).toLocaleString('es-CO')}`}
         </div>
         <div style={{ fontSize: 13, color: C.text2 }}>Registrado en tu ciclo actual</div>
       </div>
@@ -231,7 +268,7 @@ export default function Agregar() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
               <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, color: C.text2 }}>{tipo === 'gasto' ? '-' : '+'}</span>
-              <input value={monto} onChange={e => setMonto(e.target.value)} type="number" placeholder="0" style={{ fontFamily: 'DM Serif Display, serif', fontSize: 44, letterSpacing: '-0.03em', background: 'none', border: 'none', color: C.text, outline: 'none', width: 200, textAlign: 'center', caretColor: C.green }} />
+              <input value={fmtMoney(monto, currency)} onChange={e => handleMoney(e.target.value, setMonto)} type="text" inputMode="numeric" placeholder="0" style={{ fontFamily: 'DM Serif Display, serif', fontSize: 44, letterSpacing: '-0.03em', background: 'none', border: 'none', color: C.text, outline: 'none', width: 240, textAlign: 'center', caretColor: C.green }} />
             </div>
             {montoNum > 0 && (
               <div style={{ fontSize: 11, color: C.text3, marginTop: 4 }}>
@@ -255,7 +292,18 @@ export default function Agregar() {
                     <span style={{ fontSize: 9, color: catId === cat.id ? C.text : C.text2, textAlign: 'center', lineHeight: 1.2 }}>{cat.nombre}</span>
                   </div>
                 ))}
+                <div onClick={() => setShowNewCat(!showNewCat)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer', padding: '7px 3px', borderRadius: 11, border: `1px dashed ${showNewCat ? C.blue : C.border}`, background: showNewCat ? 'rgba(96,165,250,0.06)' : 'transparent', transition: 'all .18s' }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, border: `1px dashed ${C.border}`, background: 'transparent', color: C.text3 }}>+</div>
+                  <span style={{ fontSize: 9, color: C.text3, textAlign: 'center', lineHeight: 1.2 }}>Otra</span>
+                </div>
               </div>
+              {showNewCat && (
+                <div style={{ marginTop: 8, display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <input value={newCatEmoji} onChange={e => setNewCatEmoji(e.target.value)} maxLength={2} style={{ width: 44, padding: '9px 0', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, color: C.text, fontSize: 18, textAlign: 'center', outline: 'none' }} />
+                  <input value={newCatNombre} onChange={e => setNewCatNombre(e.target.value)} placeholder="Nombre categoría" style={{ flex: 1, padding: '9px 12px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, outline: 'none' }} />
+                  <div onClick={guardarCategoria} style={{ padding: '9px 14px', borderRadius: 12, background: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.3)', color: C.blue, fontSize: 12, fontWeight: 600, cursor: savingCat ? 'not-allowed' : 'pointer', opacity: savingCat ? 0.6 : 1 }}>{savingCat ? '...' : 'Crear'}</div>
+                </div>
+              )}
             </div>
 
             {metodos.length > 0 && (
@@ -330,7 +378,18 @@ export default function Agregar() {
                     <span style={{ fontSize: 9, color: catId === cat.id ? C.text : C.text2, textAlign: 'center', lineHeight: 1.2 }}>{cat.nombre}</span>
                   </div>
                 ))}
+                <div onClick={() => setShowNewCat(!showNewCat)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer', padding: '7px 3px', borderRadius: 11, border: `1px dashed ${showNewCat ? C.green : C.border}`, background: showNewCat ? 'rgba(94,240,176,0.06)' : 'transparent', transition: 'all .18s' }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, border: `1px dashed ${C.border}`, background: 'transparent', color: C.text3 }}>+</div>
+                  <span style={{ fontSize: 9, color: C.text3, textAlign: 'center', lineHeight: 1.2 }}>Otra</span>
+                </div>
               </div>
+              {showNewCat && (
+                <div style={{ marginTop: 8, display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <input value={newCatEmoji} onChange={e => setNewCatEmoji(e.target.value)} maxLength={2} style={{ width: 44, padding: '9px 0', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, color: C.text, fontSize: 18, textAlign: 'center', outline: 'none' }} />
+                  <input value={newCatNombre} onChange={e => setNewCatNombre(e.target.value)} placeholder="Nombre categoría" style={{ flex: 1, padding: '9px 12px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, outline: 'none' }} />
+                  <div onClick={guardarCategoria} style={{ padding: '9px 14px', borderRadius: 12, background: 'rgba(94,240,176,0.15)', border: '1px solid rgba(94,240,176,0.3)', color: C.green, fontSize: 12, fontWeight: 600, cursor: savingCat ? 'not-allowed' : 'pointer', opacity: savingCat ? 0.6 : 1 }}>{savingCat ? '...' : 'Crear'}</div>
+                </div>
+              )}
             </div>
 
             <div style={{ marginBottom: 13 }}>
@@ -354,32 +413,41 @@ export default function Agregar() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 13 }}>
               {[
-                { label: 'Deuda total', val: montoTotal, set: setMontoTotal, ph: '10.000.000' },
-                { label: 'Valor cuota', val: cuotaMensual, set: setCuotaMensual, ph: '500.000' },
-                { label: 'Total cuotas', val: cuotasTotales, set: setCuotasTotales, ph: '24' },
-                { label: 'Día de pago', val: diaPago, set: setDiaPago, ph: '15' },
-              ].map(({ label, val, set, ph }) => (
+                { label: 'Deuda total', val: montoTotal, set: setMontoTotal, ph: '10.000.000', money: true },
+                { label: 'Valor cuota', val: cuotaMensual, set: setCuotaMensual, ph: '500.000', money: true },
+                { label: 'Ya pagado', val: montoPagado, set: setMontoPagado, ph: '0', money: true },
+                { label: 'Total cuotas', val: cuotasTotales, set: setCuotasTotales, ph: '24', money: false },
+                { label: 'Día de pago', val: diaPago, set: setDiaPago, ph: '15', money: false },
+              ].map(({ label, val, set, ph, money }) => (
                 <div key={label}>
                   <div style={{ fontSize: 9.5, color: C.text3, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 }}>{label}</div>
-                  <input value={val} onChange={e => set(e.target.value)} type="number" placeholder={ph} style={{ width: '100%', padding: '10px 12px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 13, outline: 'none' }} />
+                  <input value={money ? fmtMoney(val, currency) : val} onChange={e => money ? handleMoney(e.target.value, set) : set(e.target.value)} type={money ? 'text' : 'number'} inputMode="numeric" placeholder={ph} style={{ width: '100%', padding: '10px 12px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 13, outline: 'none' }} />
                 </div>
               ))}
             </div>
 
-            {montoTotal && cuotaMensual && cuotasTotales && (
-              <div style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.14)', borderRadius: 14, padding: '12px 14px', marginBottom: 13 }}>
-                {[
-                  ['Cuotas pagadas', '0'],
-                  ['Cuotas restantes', cuotasTotales],
-                  ['Saldo pendiente', `$${parseFloat(montoTotal || 0).toLocaleString('es-CO')}`],
-                ].map(([label, val]) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 5 }}>
-                    <span style={{ color: C.text2 }}>{label}</span>
-                    <span style={{ color: C.amber }}>{val}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+            {montoTotal && cuotaMensual && cuotasTotales && (() => {
+              const total = rawToNum(montoTotal)
+              const pagado = rawToNum(montoPagado)
+              const cuota = rawToNum(cuotaMensual)
+              const cuotasPagadas = cuota > 0 ? Math.floor(pagado / cuota) : 0
+              const cuotasRest = Math.max(0, parseInt(cuotasTotales) - cuotasPagadas)
+              const pendiente = Math.max(0, total - pagado)
+              return (
+                <div style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.14)', borderRadius: 14, padding: '12px 14px', marginBottom: 13 }}>
+                  {[
+                    ['Cuotas pagadas', String(cuotasPagadas)],
+                    ['Cuotas restantes', String(cuotasRest)],
+                    ['Saldo pendiente', `$${pendiente.toLocaleString('es-CO')}`],
+                  ].map(([label, val]) => (
+                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 5 }}>
+                      <span style={{ color: C.text2 }}>{label}</span>
+                      <span style={{ color: C.amber }}>{val}</span>
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
           </>
         )}
 
@@ -391,25 +459,25 @@ export default function Agregar() {
       </div>
 
       {/* Bottom nav - mobile only */}
-      <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 70, background: 'rgba(8,13,26,0.95)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-around', paddingTop: 8, zIndex: 10 }}>
+      <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
         {[
-          { icon: '🏠', label: 'Inicio', to: '/home' },
-          { icon: '📊', label: 'Gastos', to: '/movimientos' },
+          { icon: <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>, label: 'Inicio', to: '/home' },
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, label: 'Gastos', to: '/movimientos' },
         ].map(({ icon, label, to }) => (
-          <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', color: C.text3 }}>
-            <span style={{ fontSize: 20 }}>{icon}</span>
+          <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+            {icon}
             <span style={{ fontSize: 9.5 }}>{label}</span>
           </div>
         ))}
-        <div style={{ width: 46, height: 46, borderRadius: 15, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: -10, boxShadow: `0 6px 20px rgba(94,240,176,0.28)` }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="21" height="21"><path d="M12 5v14M5 12h14" /></svg>
+        <div style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14" /></svg>
         </div>
         {[
-          { icon: '👥', label: 'Hogar', to: '/hogar' },
-          { icon: '👤', label: 'Perfil', to: '/perfil' },
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>, label: 'Hogar', to: '/hogar' },
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: 'Perfil', to: '/perfil' },
         ].map(({ icon, label, to }) => (
-          <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', color: C.text3 }}>
-            <span style={{ fontSize: 20 }}>{icon}</span>
+          <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+            {icon}
             <span style={{ fontSize: 9.5 }}>{label}</span>
           </div>
         ))}
