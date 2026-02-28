@@ -312,25 +312,46 @@ export default function Perfil() {
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text, fontFamily: 'DM Sans, sans-serif' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap'); * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; } input::placeholder { color: rgba(238,242,255,0.28); }`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+        * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; }
+        input::placeholder { color: rgba(238,242,255,0.28); }
+        .desktop-nav { display: none !important; }
+        .bottom-nav { display: flex !important; }
+        .page-content { padding-bottom: 90px; }
+        .mobile-header { display: flex; }
+        @media (min-width: 768px) {
+          .desktop-nav { display: flex !important; }
+          .bottom-nav { display: none !important; }
+          .page-content { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+          .mobile-header { display: none !important; }
+        }
+      `}</style>
       <Toast msg={toast} />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 52, padding: '40px 20px', minHeight: '100vh' }}>
+      {/* Desktop TopNav */}
+      <div className="desktop-nav" style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {[['Inicio', '/home', false], ['Gastos', '/movimientos', false], ['Plan', '/plan', false], ['Hogar', '/hogar', false]].map(([label, to, active]) => (
+            <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: C.text2, cursor: 'pointer', border: '1px solid transparent', background: 'transparent', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
+          ))}
+        </div>
+        <div onClick={() => setModPerfil(true)} style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.purple}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }}>
+          {perfil?.foto_url ? <img src={perfil.foto_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : perfil?.avatar_emoji || '👤'}
+        </div>
+      </div>
 
-        {/* ══════════════ MOBILE ══════════════ */}
-        <div style={{ width: 390, flexShrink: 0, position: 'relative', borderRadius: 48, border: `1.5px solid ${C.border2}`, background: 'rgba(8,13,26,0.72)', backdropFilter: 'blur(40px)', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.65)', display: 'flex', flexDirection: 'column', minHeight: 844 }}>
-          <div style={{ padding: '14px 28px 0', display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600 }}><span>9:41</span><div style={{ display: 'flex', gap: 5 }}><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
-          <div style={{ width: 118, height: 32, background: '#000', borderRadius: '0 0 20px 20px', margin: '6px auto 0' }} />
+      {/* Content */}
+      <div className="page-content" style={{ position: 'relative', zIndex: 1 }}>
 
-          <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 90 }}>
-
-            {/* Topbar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px 10px' }}>
-              <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em' }}>Perfil</div>
-              <div onClick={() => setModPerfil(true)} style={{ width: 34, height: 34, borderRadius: 11, background: C.surface, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </div>
-            </div>
+        {/* Mobile header */}
+        <div className="mobile-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px 10px' }}>
+          <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em' }}>Perfil</div>
+          <div onClick={() => setModPerfil(true)} style={{ width: 34, height: 34, borderRadius: 11, background: C.surface, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+        </div>
 
             {/* ① Perfil card */}
             <div onClick={() => setModPerfil(true)} style={{ margin: '0 18px 16px', padding: 20, borderRadius: 24, background: 'linear-gradient(135deg,rgba(192,132,252,0.18),rgba(96,165,250,0.1))', border: '1px solid rgba(192,132,252,0.22)', display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer', transition: 'all .2s', position: 'relative', overflow: 'hidden' }}>
@@ -451,30 +472,6 @@ export default function Perfil() {
             </div>
 
             <div style={{ height: 10 }} />
-          </div>
-
-          {/* Bottom nav */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
-            {[
-              { icon: <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>, label: 'Inicio', to: '/home' },
-              { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, label: 'Gastos', to: '/movimientos' },
-            ].map(({ icon, label, to }) => (
-              <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-                {icon}<span style={{ fontSize: 9.5 }}>{label}</span>
-              </div>
-            ))}
-            <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
-            </div>
-            {[
-              { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>, label: 'Plan', to: '/plan' },
-              { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: 'Perfil', to: '/perfil', active: true },
-            ].map(({ icon, label, to, active }) => (
-              <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active ? C.purple : C.text3 }}>
-                {icon}<span style={{ fontSize: 9.5 }}>{label}</span>
-              </div>
-            ))}
-          </div>
 
           {/* ══ MODAL: Editar perfil ══ */}
           <Modal open={modPerfil} onClose={() => setModPerfil(false)}>
@@ -670,134 +667,31 @@ export default function Perfil() {
             <SaveBtn onClick={() => { setModTasa(false); showToast(`✅ Tasa $${tasa.toLocaleString('es-CO')} COP guardada`) }} label="Guardar tasa" color={C.blue} />
           </Modal>
 
-        </div>{/* /phone */}
+      </div>{/* /page-content */}
 
-        {/* ══════════════ DESKTOP ══════════════ */}
-        <div style={{ display: 'none', width: 480, flexDirection: 'column', gap: 13 }} className="desktop-panel">
-
-          {/* Top nav */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 4 }}>
-            <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, #eef2ff, ${C.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
-            <div style={{ display: 'flex', gap: 4 }}>
-              {[['Inicio', '/home', false], ['Movimientos', '/movimientos', false], ['Plan', '/plan', false], ['Perfil', '/perfil', true]].map(([label, to, active]) => (
-                <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active ? C.purple : C.text2, cursor: 'pointer', border: active ? `1px solid rgba(192,132,252,0.2)` : 'none', background: active ? 'rgba(192,132,252,0.07)' : 'none', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
-              ))}
-            </div>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.purple}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }} onClick={() => setModPerfil(true)}>
-              {perfil?.foto_url ? <img src={perfil.foto_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : perfil?.avatar_emoji || '👤'}
-            </div>
+      {/* Bottom nav - mobile only */}
+      <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
+        {[
+          { icon: <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>, label: 'Inicio', to: '/home' },
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, label: 'Gastos', to: '/movimientos' },
+        ].map(({ icon, label, to }) => (
+          <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+            {icon}<span style={{ fontSize: 9.5 }}>{label}</span>
           </div>
-
-          {/* Perfil hero */}
-          <div onClick={() => setModPerfil(true)} style={{ background: 'linear-gradient(135deg,rgba(192,132,252,0.17),rgba(96,165,250,0.1))', border: `1px solid rgba(192,132,252,0.22)`, borderRadius: 20, padding: '22px 24px', display: 'flex', alignItems: 'center', gap: 18, cursor: 'pointer' }}>
-            <div style={{ width: 70, height: 70, borderRadius: '50%', background: 'linear-gradient(135deg,rgba(192,132,252,0.3),rgba(96,165,250,0.2))', border: '2px solid rgba(192,132,252,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, flexShrink: 0, overflow: 'hidden' }}>{perfil?.foto_url ? <img src={perfil.foto_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : perfil?.avatar_emoji || '🦊'}</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em', marginBottom: 2 }}>{perfil?.nombre || 'Tu nombre'}</div>
-              <div style={{ fontSize: 12, color: C.text2, marginBottom: 10 }}>{user?.email}</div>
-              <div style={{ display: 'flex', gap: 20 }}>
-                <div><div style={{ fontSize: 15, fontWeight: 600 }}>{metodos.length}</div><div style={{ fontSize: 10, color: C.text3 }}>métodos</div></div>
-                <div><div style={{ fontSize: 15, fontWeight: 600 }}>Día {ciclo.diasTranscurridos}</div><div style={{ fontSize: 10, color: C.text3 }}>ciclo actual</div></div>
-              </div>
-            </div>
-            <div style={{ fontSize: 11, padding: '6px 12px', background: 'rgba(192,132,252,0.15)', border: '1px solid rgba(192,132,252,0.25)', borderRadius: 10, color: C.purple, cursor: 'pointer' }}>Editar</div>
-          </div>
-
-          {/* Grid 2 col: ciclo + tasas */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 13 }}>
-            {/* Ciclo */}
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3 }}>Ciclo de pago</span>
-                <span onClick={() => setModCiclo(true)} style={{ fontSize: 11, color: C.purple, cursor: 'pointer' }}>Editar →</span>
-              </div>
-              <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 2 }}>{ciclo.fmt(ciclo.start)} → {ciclo.fmt(ciclo.end)}</div>
-              <div style={{ fontSize: 10.5, color: C.text2, marginBottom: 12 }}>Día {ciclo.diasTranscurridos} de {cicloDuracion} · comienza el día {cicloDia}</div>
-              <div style={{ height: 6, background: 'rgba(255,255,255,0.07)', borderRadius: 3, overflow: 'hidden', marginBottom: 6 }}>
-                <div style={{ height: '100%', width: `${ciclo.pct}%`, borderRadius: 3, background: `linear-gradient(90deg, ${C.purple}, ${C.blue})` }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: C.text3, marginBottom: 14 }}><span>{ciclo.pct}% transcurrido</span><span>{ciclo.diasRestantes} restantes</span></div>
-              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                {DURACIONES.map(d => (
-                  <div key={d.val} onClick={() => setCicloDuracion(d.val)} style={{ padding: '5px 10px', borderRadius: 20, fontSize: 11, fontWeight: 500, cursor: 'pointer', border: `1px solid ${cicloDuracion === d.val ? 'rgba(192,132,252,0.3)' : C.border}`, background: cicloDuracion === d.val ? 'rgba(192,132,252,0.15)' : C.surface, color: cicloDuracion === d.val ? C.purple : C.text2 }}>{d.val}d</div>
-                ))}
-              </div>
-            </div>
-
-            {/* Tasas */}
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3 }}>Tasas COP/USD</span>
-                <span onClick={() => setModTasa(true)} style={{ fontSize: 11, color: C.purple, cursor: 'pointer' }}>+ Período</span>
-              </div>
-              <div onClick={() => setModTasa(true)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'rgba(94,240,176,0.06)', border: '1px solid rgba(94,240,176,0.15)', borderRadius: 14, cursor: 'pointer' }}>
-                <div><div style={{ fontSize: 12, fontWeight: 500 }}>{ciclo.fmt(ciclo.start)} → {ciclo.fmt(ciclo.end)}</div><div style={{ fontSize: 10, color: C.text2 }}>Actual · Manual</div></div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: C.blue }}>${tasa.toLocaleString('es-CO')}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Métodos de pago desktop */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3 }}>Métodos de pago</span>
-              <span onClick={() => setModMetodo(true)} style={{ fontSize: 11, color: C.purple, cursor: 'pointer' }}>+ Añadir →</span>
-            </div>
-            {metodos.map(m => (
-              <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '11px 13px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, borderRadius: 14, marginBottom: 7, cursor: 'pointer' }}>
-                <div style={{ width: 36, height: 36, borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, border: `1px solid ${C.border}`, background: tipoIconBg(m.tipo) }}>{tipoIcon(m.tipo)}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{m.alias}{m.ultimos_4 ? ` ••${m.ultimos_4}` : ''}</div>
-                  <div style={{ fontSize: 10.5, color: C.text2, marginTop: 1 }}>{tipoLabel(m.tipo)}</div>
-                </div>
-                <span style={{ fontSize: 9.5, padding: '2px 7px', borderRadius: 10, fontWeight: 600, border: '1px solid', ...tipoBadgeStyle(m.tipo) }}>{tipoLabel(m.tipo)}</span>
-              </div>
-            ))}
-            {metodos.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: C.text3, fontSize: 13 }}>Sin métodos agregados. <span onClick={() => setModMetodo(true)} style={{ color: C.purple, cursor: 'pointer' }}>+ Añadir</span></div>}
-          </div>
-
-          {/* Preferencias desktop */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3, marginBottom: 13 }}>Preferencias</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div onClick={() => setPrefNotif(!prefNotif)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 13px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, borderRadius: 14, cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(251,191,36,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>🔔</div>
-                  <div><div style={{ fontSize: 13, fontWeight: 500 }}>Notificaciones</div><div style={{ fontSize: 10.5, color: C.text2 }}>Alertas de gastos y deudas</div></div>
-                </div>
-                <Toggle on={prefNotif} />
-              </div>
-              <div onClick={() => setPrefBiom(!prefBiom)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 13px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, borderRadius: 14, cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(94,240,176,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>🔒</div>
-                  <div><div style={{ fontSize: 13, fontWeight: 500 }}>Face ID / Touch ID</div><div style={{ fontSize: 10.5, color: C.text2 }}>Para abrir la app</div></div>
-                </div>
-                <Toggle on={prefBiom} />
-              </div>
-              <div onClick={() => showToast('📤 Exportar como CSV, PDF o Excel')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 13px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, borderRadius: 14, cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(192,132,252,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>📤</div>
-                  <div><div style={{ fontSize: 13, fontWeight: 500 }}>Exportar datos</div><div style={{ fontSize: 10.5, color: C.text2 }}>CSV · PDF · Excel</div></div>
-                </div>
-                <span style={{ fontSize: 12, color: C.text3 }}>›</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Cuenta desktop */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3, marginBottom: 13 }}>Cuenta</div>
-            <SRow icon="📧" title="Email" sub={user?.email} onClick={() => showToast('📧 ' + user?.email)} />
-            <SRow icon="🔑" title="Contraseña" sub="Última actualización: hace 3 meses" onClick={() => showToast('🔑 Cambiar contraseña')} />
-            <SRow icon="🚪" bg="rgba(248,113,113,0.1)" title="Cerrar sesión" danger onClick={cerrarSesion} />
-          </div>
-
+        ))}
+        <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
         </div>
+        {[
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>, label: 'Plan', to: '/plan' },
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: 'Perfil', to: '/perfil', active: true },
+        ].map(({ icon, label, to, active }) => (
+          <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active ? C.purple : C.text3 }}>
+            {icon}<span style={{ fontSize: 9.5 }}>{label}</span>
+          </div>
+        ))}
       </div>
 
-      <style>{`
-        @media (min-width: 900px) { .desktop-panel { display: flex !important; } }
-        @media (max-width: 440px) { .phone { width: 100vw !important; min-height: 100vh !important; border-radius: 0 !important; border: none !important; } }
-      `}</style>
     </div>
   )
 }

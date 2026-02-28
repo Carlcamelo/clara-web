@@ -159,55 +159,62 @@ export default function Plan() {
     <div style={{ minHeight: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.green, fontFamily: 'DM Sans, sans-serif' }}>Cargando...</div>
   )
 
-  const NavBar = () => (
-    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
-      <div onClick={() => navigate('/home')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
-        <span style={{ fontSize: 9.5 }}>Inicio</span>
-      </div>
-      <div onClick={() => navigate('/movimientos')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
-        <span style={{ fontSize: 9.5 }}>Gastos</span>
-      </div>
-      <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14" /></svg>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '4px 12px', color: C.green }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
-        <span style={{ fontSize: 9.5 }}>Plan</span>
-      </div>
-      <div onClick={() => navigate('/perfil')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-        <span style={{ fontSize: 9.5 }}>Perfil</span>
-      </div>
-    </div>
-  )
-
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text, fontFamily: 'DM Sans, sans-serif' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap'); * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; }`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+        * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; }
+        .desktop-nav { display: none !important; }
+        .bottom-nav { display: flex !important; }
+        .page-content { padding-bottom: 90px; }
+        .mobile-header { display: flex; }
+        .mobile-currency { display: flex; }
+        .plan-grid { display: flex; flex-direction: column; }
+        @media (min-width: 768px) {
+          .desktop-nav { display: flex !important; }
+          .bottom-nav { display: none !important; }
+          .page-content { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+          .mobile-header { display: none !important; }
+          .mobile-currency { display: none !important; }
+          .plan-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 14px; }
+        }
+      `}</style>
       <Toast msg={toast} />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 52, padding: '40px 20px', minHeight: '100vh' }}>
+      {/* Desktop TopNav */}
+      <div className="desktop-nav" style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.green})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {[['Inicio', '/home', false], ['Gastos', '/movimientos', false], ['Plan', '/plan', true], ['Hogar', '/hogar', false]].map(([label, to, active]) => (
+            <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active ? C.green : C.text2, cursor: 'pointer', border: active ? `1px solid rgba(94,240,176,0.2)` : '1px solid transparent', background: active ? 'rgba(94,240,176,0.07)' : 'transparent', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', border: `1px solid ${C.border}`, borderRadius: 10, padding: 3, gap: 2 }}>
+            {['COP', 'USD'].map(c => (
+              <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.1)' : 'transparent' }}>{c}</div>
+            ))}
+          </div>
+          <div onClick={() => navigate('/perfil')} style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }}>
+            {fotoUrl ? <img src={fotoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
+          </div>
+        </div>
+      </div>
 
-        {/* ══════════════ MOBILE ══════════════ */}
-        <div style={{ width: 390, flexShrink: 0, position: 'relative', borderRadius: 48, border: `1.5px solid ${C.border2}`, background: 'rgba(8,13,26,0.72)', backdropFilter: 'blur(40px)', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.65)', display: 'flex', flexDirection: 'column', minHeight: 844 }}>
-          <div style={{ padding: '14px 28px 0', display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600 }}><span>9:41</span><div style={{ display: 'flex', gap: 5 }}><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
-          <div style={{ width: 118, height: 32, background: '#000', borderRadius: '0 0 20px 20px', margin: '6px auto 0' }} />
+      {/* Content */}
+      <div className="page-content" style={{ position: 'relative', zIndex: 1 }}>
 
-          <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 90 }}>
-
-            {/* Topbar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px 10px' }}>
-              <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em' }}>Plan</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ display: 'flex', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: 3, gap: 2 }}>
-                  {['COP', 'USD'].map(c => (
-                    <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 11px', borderRadius: 15, fontSize: 10.5, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.11)' : 'transparent' }}>{c}</div>
-                  ))}
-                </div>
-              </div>
+        {/* Mobile header */}
+        <div className="mobile-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px 10px' }}>
+          <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em' }}>Plan</div>
+          <div className="mobile-currency" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: 3, gap: 2 }}>
+              {['COP', 'USD'].map(c => (
+                <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 11px', borderRadius: 15, fontSize: 10.5, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.11)' : 'transparent' }}>{c}</div>
+              ))}
             </div>
+          </div>
+        </div>
 
             {/* Ciclo chip */}
             <div style={{ padding: '0 20px 12px', display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -324,120 +331,31 @@ export default function Plan() {
               )}
             </div>
 
-          </div>
-          <NavBar />
+      </div>{/* /page-content */}
+
+      {/* Bottom nav - mobile only */}
+      <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
+        <div onClick={() => navigate('/home')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+          <span style={{ fontSize: 9.5 }}>Inicio</span>
         </div>
-
-        {/* ══════════════ DESKTOP ══════════════ */}
-        <div style={{ display: 'none', width: 500, flexDirection: 'column', gap: 13 }} className="desktop-panel">
-
-          {/* Top nav */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 4 }}>
-            <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, #eef2ff, ${C.green})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
-            <div style={{ display: 'flex', gap: 4 }}>
-              {[['Inicio', '/home', false], ['Movimientos', '/movimientos', false], ['Plan', '/plan', true], ['Perfil', '/perfil', false]].map(([label, to, active]) => (
-                <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active ? C.green : C.text2, cursor: 'pointer', border: active ? `1px solid rgba(94,240,176,0.2)` : 'none', background: active ? 'rgba(94,240,176,0.07)' : 'none', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
-              ))}
-            </div>
-            <div onClick={() => navigate('/perfil')} style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }}>
-              {fotoUrl ? <img src={fotoUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
-            </div>
-          </div>
-
-          {/* Currency toggle desktop */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', border: `1px solid ${C.border}`, borderRadius: 10, padding: 3, gap: 2 }}>
-              {['COP', 'USD'].map(c => (
-                <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.1)' : 'transparent' }}>{c}</div>
-              ))}
-            </div>
-          </div>
-
-          {/* Balance hero desktop */}
-          <div style={{ background: 'linear-gradient(135deg,rgba(96,165,250,0.16),rgba(94,240,176,0.1))', border: '1px solid rgba(94,240,176,0.16)', borderRadius: 20, padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 5 }}>
-              <div style={{ fontSize: 10.5, color: C.text2, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                {ciclo.fmt(ciclo.start)} → {ciclo.fmt(ciclo.end)}
-              </div>
-            </div>
-            <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 50, letterSpacing: '-.03em', lineHeight: 1, marginBottom: 5 }}>{fmtFull(saldo, currency)}</div>
-            <div style={{ fontSize: 12, color: saldo >= 0 ? C.green : C.red, marginBottom: 18 }}>{saldo >= 0 ? '↑ Con superávit' : '↓ En déficit'}</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 18 }}>
-              {[['Ingresos', totalIngresos, C.green], ['Gastos', totalGastos, C.red], ['Deudas', totalDeudas, C.amber]].map(([lbl, val, color]) => (
-                <div key={lbl} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '13px 14px' }}>
-                  <div style={{ fontSize: 9.5, color: C.text2, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>{lbl}</div>
-                  <div style={{ fontSize: 20, fontWeight: 600, color }}>{fmt(val, currency)}</div>
-                </div>
-              ))}
-            </div>
-            {/* Progress */}
-            <div style={{ height: 6, background: 'rgba(255,255,255,0.07)', borderRadius: 3, overflow: 'hidden', marginBottom: 6 }}>
-              <div style={{ height: '100%', width: `${ciclo.pct}%`, borderRadius: 3, background: `linear-gradient(90deg, ${C.blue}, ${C.green})` }} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: C.text3 }}>
-              <span>Día {ciclo.diasTranscurridos} de {ciclo.duracion}</span>
-              <span>{ciclo.diasRestantes} días restantes</span>
-            </div>
-          </div>
-
-          {/* 50/30/20 desktop */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '20px 22px' }}>
-            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3, marginBottom: 14 }}>Presupuesto 50/30/20</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <BudgetRow emoji="🏠" label="Necesidades" pct={50} gastado={gastNeed} limite={limNeed} color={C.blue} currency={currency} />
-              <BudgetRow emoji="🎬" label="Deseos" pct={30} gastado={gastWant} limite={limWant} color={C.purple} currency={currency} />
-              <BudgetRow emoji="🏦" label="Ahorro" pct={20} gastado={gastSave} limite={limSave} color={C.green} currency={currency} />
-            </div>
-          </div>
-
-          {/* Grid ingresos + deudas */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 13 }}>
-            {/* Ingresos */}
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3 }}>Ingresos</span>
-                <span onClick={() => navigate('/agregar')} style={{ fontSize: 11, color: C.blue, cursor: 'pointer' }}>+ Agregar</span>
-              </div>
-              {ingresos.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '16px 0', color: C.text3, fontSize: 12 }}>Sin ingresos</div>
-              ) : ingresos.slice(0, 4).map(i => (
-                <div key={i.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 500 }}>{i.nombre}</div>
-                    <div style={{ fontSize: 10, color: C.text3 }}>{i.fecha}</div>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.green }}>+{fmtFull(Math.abs(Number(i.monto_cop)), currency)}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Deudas */}
-            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 13 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3 }}>Deudas activas</span>
-                <span onClick={() => navigate('/agregar')} style={{ fontSize: 11, color: C.blue, cursor: 'pointer' }}>+ Agregar</span>
-              </div>
-              {deudas.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '16px 0', color: C.text3, fontSize: 12 }}>Sin deudas ✅</div>
-              ) : deudas.slice(0, 3).map(d => (
-                <div key={d.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 500 }}>{d.nombre}</div>
-                    <div style={{ fontSize: 10, color: C.text3 }}>{fmt(Number(d.monto_pagado_cop || 0), currency)} pagado</div>
-                  </div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.amber }}>{fmtFull(Number(d.cuota_mensual_cop || 0), currency)}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <div onClick={() => navigate('/movimientos')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
+          <span style={{ fontSize: 9.5 }}>Gastos</span>
+        </div>
+        <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14" /></svg>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '4px 12px', color: C.green }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+          <span style={{ fontSize: 9.5 }}>Plan</span>
+        </div>
+        <div onClick={() => navigate('/perfil')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+          <span style={{ fontSize: 9.5 }}>Perfil</span>
         </div>
       </div>
 
-      <style>{`
-        @media (min-width: 900px) { .desktop-panel { display: flex !important; } }
-        @media (max-width: 440px) { .phone { width: 100vw !important; min-height: 100vh !important; border-radius: 0 !important; border: none !important; } }
-      `}</style>
     </div>
   )
 }

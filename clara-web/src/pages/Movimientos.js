@@ -255,30 +255,60 @@ export default function Movimientos() {
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text, fontFamily: 'DM Sans, sans-serif' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap'); * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; } input::placeholder { color: rgba(238,242,255,0.28); }`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+        * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; }
+        input::placeholder { color: rgba(238,242,255,0.28); }
+        .desktop-nav { display: none !important; }
+        .bottom-nav { display: flex !important; }
+        .page-content { padding-bottom: 90px; }
+        .mobile-header { display: flex; }
+        .mobile-currency { display: flex; }
+        @media (min-width: 768px) {
+          .desktop-nav { display: flex !important; }
+          .bottom-nav { display: none !important; }
+          .page-content { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+          .mobile-header { display: none !important; }
+          .mobile-currency { display: none !important; }
+        }
+      `}</style>
       <Toast msg={toast} />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 52, padding: '40px 20px', minHeight: '100vh' }}>
+      {/* Desktop TopNav */}
+      <div className="desktop-nav" style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.blue})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {[['Inicio', '/home', false], ['Gastos', '/movimientos', true], ['Plan', '/plan', false], ['Hogar', '/hogar', false]].map(([label, to, active]) => (
+            <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active ? C.blue : C.text2, cursor: 'pointer', border: active ? `1px solid rgba(96,165,250,0.2)` : '1px solid transparent', background: active ? 'rgba(96,165,250,0.07)' : 'transparent', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', border: `1px solid ${C.border}`, borderRadius: 20, padding: 3, gap: 2 }}>
+            {['COP', 'USD'].map(c => (
+              <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 11px', borderRadius: 15, fontSize: 10.5, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.11)' : 'transparent' }}>{c}</div>
+            ))}
+          </div>
+          <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }} onClick={() => navigate('/perfil')}>
+            {fotoUrl ? <img src={fotoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
+          </div>
+        </div>
+      </div>
 
-        {/* ══════════════ MOBILE ══════════════ */}
-        <div style={{ width: 390, flexShrink: 0, position: 'relative', borderRadius: 48, border: `1.5px solid ${C.border2}`, background: 'rgba(8,13,26,0.72)', backdropFilter: 'blur(40px)', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.65)', display: 'flex', flexDirection: 'column', minHeight: 844 }}>
-          {/* Status bar */}
-          <div style={{ padding: '14px 28px 0', display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600 }}><span>9:41</span><div style={{ display: 'flex', gap: 5 }}><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
-          <div style={{ width: 118, height: 32, background: '#000', borderRadius: '0 0 20px 20px', margin: '6px auto 0' }} />
+      {/* Content */}
+      <div className="page-content" style={{ position: 'relative', zIndex: 1 }}>
 
-          <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 90 }}>
-            {/* Topbar */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px 10px' }}>
-              <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em' }}>Movimientos</div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <div style={{ width: 34, height: 34, borderRadius: 11, background: C.surface, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={() => showToast(`📅 ${formatCiclo(ciclo.start)} → ${formatCiclo(ciclo.end)} · ${ciclo.diasRestantes} días restantes`)}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                </div>
-              </div>
+        {/* Mobile header */}
+        <div className="mobile-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px 10px' }}>
+          <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, letterSpacing: '-.02em' }}>Movimientos</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 11, background: C.surface, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} onClick={() => showToast(`📅 ${formatCiclo(ciclo.start)} → ${formatCiclo(ciclo.end)} · ${ciclo.diasRestantes} días restantes`)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </div>
+          </div>
+        </div>
 
-            {/* Currency + ciclo */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px' }}>
+        {/* Currency + ciclo - mobile only */}
+        <div className="mobile-currency" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 12px' }}>
               <div style={{ display: 'flex', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: 3, gap: 2 }}>
                 {['COP', 'USD'].map(c => (
                   <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 11px', borderRadius: 15, fontSize: 10.5, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.11)' : 'transparent', transition: 'all .2s' }}>{c}</div>
@@ -374,144 +404,32 @@ export default function Movimientos() {
                 )
               })}
             </div>
-          </div>
 
-          {/* Bottom nav */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
-            <div onClick={() => navigate('/home')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-              <span style={{ fontSize: 9.5 }}>Inicio</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '4px 12px', color: C.blue }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              <span style={{ fontSize: 9.5 }}>Gastos</span>
-            </div>
-            <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
-            </div>
-            <div onClick={() => navigate('/plan')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <span style={{ fontSize: 9.5 }}>Plan</span>
-            </div>
-            <div onClick={() => navigate('/hogar')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              <span style={{ fontSize: 9.5 }}>Hogar</span>
-            </div>
-          </div>
+      </div>{/* /page-content */}
+
+      {/* Bottom nav - mobile only */}
+      <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
+        <div onClick={() => navigate('/home')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span style={{ fontSize: 9.5 }}>Inicio</span>
         </div>
-
-        {/* ══════════════ DESKTOP ══════════════ */}
-        <div style={{ display: 'none', width: 500, flexDirection: 'column', gap: 13 }} className="desktop-panel">
-
-          {/* Top nav */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 4 }}>
-            <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, #eef2ff, ${C.blue})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
-            <div style={{ display: 'flex', gap: 4 }}>
-              {[['Inicio', '/home', false], ['Movimientos', '/movimientos', true], ['Plan', '/plan', false], ['Hogar', '/hogar', false]].map(([label, to, active]) => (
-                <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active ? C.blue : C.text2, cursor: 'pointer', border: active ? `1px solid rgba(96,165,250,0.2)` : 'none', background: active ? 'rgba(96,165,250,0.07)' : 'none', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
-              ))}
-            </div>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, overflow: 'hidden', cursor: 'pointer' }} onClick={() => navigate('/perfil')}>
-              {fotoUrl ? <img src={fotoUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : avatar}
-            </div>
-          </div>
-
-          {/* Balance hero */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px', background: 'linear-gradient(135deg,rgba(96,165,250,0.16),rgba(94,240,176,0.09))', borderColor: 'rgba(96,165,250,0.2)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-              <div>
-                <div style={{ fontSize: 10, color: C.text2, textTransform: 'uppercase', letterSpacing: '.07em', marginBottom: 3 }}>
-                  Ciclo {formatCiclo(ciclo.start)} → {formatCiclo(ciclo.end)}
-                </div>
-                <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 42, letterSpacing: '-.03em', lineHeight: 1 }}>{fmtFull(saldo, currency)}</div>
-                <div style={{ fontSize: 11, color: C.green, marginTop: 3 }}>↑ Saldo disponible del ciclo</div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
-                <div style={{ display: 'flex', background: 'rgba(0,0,0,0.22)', border: `1px solid ${C.border}`, borderRadius: 20, padding: 3, gap: 2 }}>
-                  {['COP', 'USD'].map(c => (
-                    <div key={c} onClick={() => setCurrency(c)} style={{ padding: '4px 11px', borderRadius: 15, fontSize: 10.5, fontWeight: 600, cursor: 'pointer', color: currency === c ? C.text : C.text2, background: currency === c ? 'rgba(255,255,255,0.11)' : 'transparent' }}>{c}</div>
-                  ))}
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 10, color: C.text3 }}>Día {ciclo.diasTranscurridos} de {ciclo.duracion}</div>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: C.amber }}>{ciclo.diasRestantes}</div>
-                  <div style={{ fontSize: 9, color: C.text3 }}>días restantes</div>
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
-              {[['Ingresos', totalIngresos, C.green], ['Gastos', totalGastos, C.red]].map(([lbl, val, color]) => (
-                <div key={lbl} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '11px 13px' }}>
-                  <div style={{ fontSize: 9.5, color: C.text2, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 }}>{lbl}</div>
-                  <div style={{ fontSize: 18, fontWeight: 600, color }}>{fmtFull(val, currency)}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Gráfica desktop */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '18px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.09em', textTransform: 'uppercase', color: C.text3 }}>Gasto diario · ciclo actual</span>
-              <div style={{ display: 'flex', gap: 10 }}>
-                {[['Ingresos', C.green], ['Gastos', C.red]].map(([lbl, color]) => (
-                  <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: C.text2 }}>
-                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: color }} />{lbl}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <BarChart movimientos={movimientos} currency={currency} />
-          </div>
-
-          {/* Search + filtros desktop */}
-          <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 20, padding: '14px 16px' }}>
-            <div style={{ display: 'flex', gap: 9, marginBottom: 11 }}>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '9px 13px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, borderRadius: 14 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: C.text3 }}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar movimiento…" style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 13 }} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {FILTROS.map(f => {
-                const active = filtro === f.key
-                return (
-                  <div key={f.key} onClick={() => setFiltro(f.key)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', border: `1px solid ${active ? f.border : C.border}`, background: active ? f.bg : C.surface, color: active ? f.color : C.text2 }}>
-                    {f.label}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Lista desktop */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {porFecha.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: 40, color: C.text2 }}>Sin resultados</div>
-            ) : porFecha.map(([fecha, txs]) => {
-              const dayTotal = txs.reduce((s, m) => {
-                const val = Math.abs(Number(m.monto_cop))
-                return s + (m._tipo === 'ingreso' ? val : -val)
-              }, 0)
-              return (
-                <div key={fecha} style={{ marginBottom: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: C.text2, textTransform: 'uppercase', letterSpacing: '.06em' }}>{labelFecha(fecha)}</span>
-                    <span style={{ fontSize: 11, color: dayTotal >= 0 ? C.green : C.red, opacity: .7 }}>{fmtMonto(dayTotal, currency)}</span>
-                  </div>
-                  {txs.map(m => <TxRow key={m.id} m={m} currency={currency} />)}
-                </div>
-              )
-            })}
-          </div>
-
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '4px 12px', color: C.blue }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span style={{ fontSize: 9.5 }}>Gastos</span>
+        </div>
+        <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+        <div onClick={() => navigate('/plan')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span style={{ fontSize: 9.5 }}>Plan</span>
+        </div>
+        <div onClick={() => navigate('/hogar')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: C.text3 }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span style={{ fontSize: 9.5 }}>Hogar</span>
         </div>
       </div>
 
-      <style>{`
-        @media (min-width: 900px) { .desktop-panel { display: flex !important; } }
-        @media (max-width: 440px) { .phone { width: 100vw !important; min-height: 100vh !important; border-radius: 0 !important; border: none !important; } }
-      `}</style>
     </div>
   )
 }

@@ -24,6 +24,24 @@ const RATE = 4500 // Tasa COP/USD
 // Emojis disponibles para hogares
 const EMOJIS_HOGAR = ['🏠', '🏡', '🏢', '🏘️', '💼', '✈️', '👥', '🎯', '🌴', '❤️']
 
+const responsiveCSS = `
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { display: none; }
+  .desktop-nav { display: none !important; }
+  .bottom-nav { display: flex !important; }
+  .page-content { padding-bottom: 90px; }
+  .hogar-grid { display: flex; flex-direction: column; }
+  .mobile-header { display: flex; }
+  @media (min-width: 768px) {
+    .desktop-nav { display: flex !important; }
+    .bottom-nav { display: none !important; }
+    .page-content { max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+    .hogar-grid { display: grid !important; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 18px; }
+    .mobile-header { display: none !important; }
+  }
+`
+
 export default function Hogar() {
   const navigate = useNavigate()
   const [usuario, setUsuario] = useState(null)
@@ -559,75 +577,19 @@ export default function Hogar() {
   // Estado vacío
   if (hogares.length === 0) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        background: C.bg,
-        fontFamily: 'DM Sans, sans-serif',
-        color: C.text,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20
-      }}>
-        {/* Layout dual */}
-        <div style={{ display: 'flex', gap: 52, alignItems: 'center' }}>
-          {/* Phone mockup */}
-          <div style={{
-            width: 390,
-            height: 844,
-            borderRadius: 48,
-            border: `1.5px solid ${C.border2}`,
-            background: 'rgba(8,13,26,0.72)',
-            backdropFilter: 'blur(40px)',
-            overflow: 'hidden',
-            boxShadow: '0 40px 100px rgba(0,0,0,0.65)',
-            display: 'flex',
-            flexDirection: 'column',
-            flexShrink: 0
-          }}>
-            <StatusBar />
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, textAlign: 'center' }}>
-              <div style={{ fontSize: 64, marginBottom: 20 }}>🏠</div>
-              <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, marginBottom: 10 }}>
-                Aún no tienes un hogar
-              </h2>
-              <p style={{ color: C.text2, fontSize: 14, marginBottom: 30, maxWidth: 280 }}>
-                Crea un hogar para compartir gastos con tu pareja, roomies o familia
-              </p>
-              
-              <button onClick={() => setModalCrear(true)} style={btnPrimary}>
-                + Crear hogar
-              </button>
-
-              <button onClick={() => setModalUnirse(true)} style={btnSecondary}>
-                Tengo un código de invitación
-              </button>
-            </div>
-            <BottomNav navigate={navigate} active="hogar" />
-          </div>
-
-          {/* Desktop */}
-          <DesktopEmpty onCrear={() => setModalCrear(true)} onUnirse={() => setModalUnirse(true)} navigate={navigate} usuario={usuario} />
+      <div style={{ minHeight: '100vh', background: C.bg, fontFamily: 'DM Sans, sans-serif', color: C.text }}>
+        <style>{responsiveCSS}</style>
+        <TopNav navigate={navigate} usuario={usuario} active="hogar" />
+        <div className="page-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 80px)', padding: '40px 20px', textAlign: 'center' }}>
+          <div style={{ fontSize: 64, marginBottom: 20 }}>🏠</div>
+          <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, marginBottom: 10 }}>Aún no tienes un hogar</h2>
+          <p style={{ color: C.text2, fontSize: 14, marginBottom: 30, maxWidth: 280 }}>Crea un hogar para compartir gastos con tu pareja, roomies o familia</p>
+          <button onClick={() => setModalCrear(true)} style={btnPrimary}>+ Crear hogar</button>
+          <button onClick={() => setModalUnirse(true)} style={btnSecondary}>Tengo un código de invitación</button>
         </div>
-
-        <ModalCrearHogar
-          visible={modalCrear}
-          onClose={() => setModalCrear(false)}
-          nombre={nuevoNombre}
-          setNombre={setNuevoNombre}
-          emoji={nuevoEmoji}
-          setEmoji={setNuevoEmoji}
-          onGuardar={crearHogar}
-          guardando={guardando}
-        />
-        <ModalUnirse
-          visible={modalUnirse}
-          onClose={() => setModalUnirse(false)}
-          codigo={codigoUnirse}
-          setCodigo={setCodigoUnirse}
-          onUnirse={unirseConCodigo}
-          guardando={guardando}
-        />
+        <BottomNav navigate={navigate} active="hogar" />
+        <ModalCrearHogar visible={modalCrear} onClose={() => setModalCrear(false)} nombre={nuevoNombre} setNombre={setNuevoNombre} emoji={nuevoEmoji} setEmoji={setNuevoEmoji} onGuardar={crearHogar} guardando={guardando} />
+        <ModalUnirse visible={modalUnirse} onClose={() => setModalUnirse(false)} codigo={codigoUnirse} setCodigo={setCodigoUnirse} onUnirse={unirseConCodigo} guardando={guardando} />
         {toast && <Toast mensaje={toast} />}
       </div>
     )
@@ -635,128 +597,53 @@ export default function Hogar() {
 
   // Vista principal con hogares
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: C.bg,
-      fontFamily: 'DM Sans, sans-serif',
-      color: C.text,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 40,
-      gap: 52
-    }}>
-      {/* ══════════ PHONE MOCKUP ══════════ */}
-      <div style={{
-        width: 390,
-        height: 844,
-        borderRadius: 48,
-        border: `1.5px solid ${C.border2}`,
-        background: 'rgba(8,13,26,0.72)',
-        backdropFilter: 'blur(40px)',
-        overflow: 'hidden',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.65)',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-        position: 'relative'
-      }}>
-        <StatusBar />
-        
-        <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 90 }}>
-          {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px 10px' }}>
-            <h1 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, margin: 0 }}>Hogar</h1>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <IconBtn onClick={abrirModalGasto}><PlusIcon /></IconBtn>
-              <IconBtn onClick={() => {/* TODO: Modal settings */}}><SettingsIcon /></IconBtn>
-            </div>
+    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: 'DM Sans, sans-serif', color: C.text }}>
+      <style>{responsiveCSS}</style>
+      <TopNav navigate={navigate} usuario={usuario} active="hogar" />
+
+      <div className="page-content">
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px 10px' }}>
+          <h1 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 26, margin: 0 }}>Hogar</h1>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <IconBtn onClick={abrirModalGasto}><PlusIcon /></IconBtn>
+            <IconBtn onClick={() => {}}><SettingsIcon /></IconBtn>
           </div>
-
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 7, padding: '0 18px 12px', overflowX: 'auto' }}>
-            {hogares.map(h => (
-              <div
-                key={h.id}
-                onClick={() => setHogarActivo(h)}
-                style={{
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '7px 13px',
-                  background: hogarActivo?.id === h.id ? 'rgba(192,132,252,0.12)' : C.surface,
-                  border: `1px solid ${hogarActivo?.id === h.id ? 'rgba(192,132,252,0.3)' : C.border}`,
-                  borderRadius: 20,
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  color: hogarActivo?.id === h.id ? C.text : C.text2
-                }}
-              >
-                {h.emoji} {h.nombre}
-              </div>
-            ))}
-            <div onClick={() => setModalCrear(true)} style={{ flexShrink: 0, padding: '7px 13px', border: `1px dashed ${C.text3}`, borderRadius: 20, cursor: 'pointer', fontSize: 12, color: C.text3 }}>
-              + Nuevo
-            </div>
-          </div>
-
-          {/* Saldo Card */}
-          {hogarActivo && (
-            <SaldoCard hogar={hogarActivo} miembros={miembros} moneda={moneda} setMoneda={setMoneda} totalGastos={totalGastos} totalRecurrentes={totalRecurrentes} miBalance={miBalance} fmt={fmt} onInvitar={() => setModalInvitar(true)} />
-          )}
-
-          {/* Balances (Fase 5) */}
-          <SeccionBalances balances={balances} deudas={deudas} usuario={usuario} fmt={fmt} onLiquidar={abrirModalLiquidar} />
-
-          {/* Pagos recurrentes (Fase 6) */}
-          <SeccionRecurrentes recurrentes={recurrentes} fmt={fmt} onAgregar={abrirModalRecurrente} usuario={usuario} miembros={miembros} />
-
-          {/* Gastos del ciclo */}
-          <SeccionGastos gastos={gastos} fmt={fmt} formatFecha={formatFecha} onAgregar={abrirModalGasto} usuario={usuario} miembros={miembros} />
-
-          {/* Miembros colapsable */}
-          <SeccionMiembros
-            miembros={miembros}
-            usuario={usuario}
-            hogarActivo={hogarActivo}
-            expandido={expandido}
-            setExpandido={setExpandido}
-            mostrarToast={mostrarToast}
-            onInvitar={() => setModalInvitar(true)}
-          />
         </div>
 
-        <BottomNav navigate={navigate} active="hogar" />
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 7, padding: '0 18px 12px', overflowX: 'auto' }}>
+          {hogares.map(h => (
+            <div key={h.id} onClick={() => setHogarActivo(h)} style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6, padding: '7px 13px', background: hogarActivo?.id === h.id ? 'rgba(192,132,252,0.12)' : C.surface, border: `1px solid ${hogarActivo?.id === h.id ? 'rgba(192,132,252,0.3)' : C.border}`, borderRadius: 20, cursor: 'pointer', fontSize: 12, color: hogarActivo?.id === h.id ? C.text : C.text2 }}>
+              {h.emoji} {h.nombre}
+            </div>
+          ))}
+          <div onClick={() => setModalCrear(true)} style={{ flexShrink: 0, padding: '7px 13px', border: `1px dashed ${C.text3}`, borderRadius: 20, cursor: 'pointer', fontSize: 12, color: C.text3 }}>+ Nuevo</div>
+        </div>
+
+        {/* Saldo Card */}
+        {hogarActivo && (
+          <SaldoCard hogar={hogarActivo} miembros={miembros} moneda={moneda} setMoneda={setMoneda} totalGastos={totalGastos} totalRecurrentes={totalRecurrentes} miBalance={miBalance} fmt={fmt} onInvitar={() => setModalInvitar(true)} />
+        )}
+
+        {/* Grid: 2 columnas en desktop */}
+        <div className="hogar-grid">
+          <div>
+            <SeccionBalances balances={balances} deudas={deudas} usuario={usuario} fmt={fmt} onLiquidar={abrirModalLiquidar} />
+            <SeccionRecurrentes recurrentes={recurrentes} fmt={fmt} onAgregar={abrirModalRecurrente} usuario={usuario} miembros={miembros} />
+          </div>
+          <div>
+            <SeccionGastos gastos={gastos} fmt={fmt} formatFecha={formatFecha} onAgregar={abrirModalGasto} usuario={usuario} miembros={miembros} />
+            <SeccionMiembros miembros={miembros} usuario={usuario} hogarActivo={hogarActivo} expandido={expandido} setExpandido={setExpandido} mostrarToast={mostrarToast} onInvitar={() => setModalInvitar(true)} />
+          </div>
+        </div>
       </div>
 
-      {/* ══════════ DESKTOP ══════════ */}
-      <DesktopView hogarActivo={hogarActivo} miembros={miembros} gastos={gastos} recurrentes={recurrentes} moneda={moneda} setMoneda={setMoneda} totalGastos={totalGastos} totalRecurrentes={totalRecurrentes} miBalance={miBalance} balances={balances} deudas={deudas} fmt={fmt} formatFecha={formatFecha} navigate={navigate} usuario={usuario} onInvitar={() => setModalInvitar(true)} onAgregarGasto={abrirModalGasto} onAgregarRecurrente={abrirModalRecurrente} onLiquidar={abrirModalLiquidar} />
+      <BottomNav navigate={navigate} active="hogar" />
 
       {/* Modales y Toast */}
-      <ModalCrearHogar
-        visible={modalCrear}
-        onClose={() => setModalCrear(false)}
-        nombre={nuevoNombre}
-        setNombre={setNuevoNombre}
-        emoji={nuevoEmoji}
-        setEmoji={setNuevoEmoji}
-        onGuardar={crearHogar}
-        guardando={guardando}
-      />
-      <ModalInvitar
-        visible={modalInvitar}
-        onClose={() => setModalInvitar(false)}
-        email={invitarEmail}
-        setEmail={setInvitarEmail}
-        rol={invitarRol}
-        setRol={setInvitarRol}
-        porcentaje={invitarPorcentaje}
-        setPorcentaje={setInvitarPorcentaje}
-        onInvitar={invitarMiembro}
-        guardando={guardando}
-        hogar={hogarActivo}
-      />
+      <ModalCrearHogar visible={modalCrear} onClose={() => setModalCrear(false)} nombre={nuevoNombre} setNombre={setNuevoNombre} emoji={nuevoEmoji} setEmoji={setNuevoEmoji} onGuardar={crearHogar} guardando={guardando} />
+      <ModalInvitar visible={modalInvitar} onClose={() => setModalInvitar(false)} email={invitarEmail} setEmail={setInvitarEmail} rol={invitarRol} setRol={setInvitarRol} porcentaje={invitarPorcentaje} setPorcentaje={setInvitarPorcentaje} onInvitar={invitarMiembro} guardando={guardando} hogar={hogarActivo} />
       <ModalUnirse visible={modalUnirse} onClose={() => setModalUnirse(false)} codigo={codigoUnirse} setCodigo={setCodigoUnirse} onUnirse={unirseConCodigo} guardando={guardando} />
       <ModalGastoHogar visible={modalGasto} onClose={() => setModalGasto(false)} nombre={gastoNombre} setNombre={setGastoNombre} monto={gastoMonto} setMonto={setGastoMonto} catId={gastoCatId} setCatId={setGastoCatId} pagadoPor={gastoPagadoPor} setPagadoPor={setGastoPagadoPor} notas={gastoNotas} setNotas={setGastoNotas} categorias={categorias} miembros={miembros} hogar={hogarActivo} onGuardar={guardarGastoHogar} guardando={guardando} fmt={fmt} />
       <ModalLiquidar visible={modalLiquidar} onClose={() => setModalLiquidar(false)} monto={liquidarMonto} setMonto={setLiquidarMonto} de={liquidarDe} a={liquidarA} miembros={miembros} onLiquidar={liquidar} guardando={guardando} fmt={fmt} />
@@ -770,18 +657,25 @@ export default function Hogar() {
 // COMPONENTES
 // ══════════════════════════════════════════════════════════════
 
-function StatusBar() {
+function TopNav({ navigate, usuario, active }) {
+  const items = [
+    { label: 'Inicio', path: '/home', id: 'home' },
+    { label: 'Gastos', path: '/movimientos', id: 'movimientos' },
+    { label: 'Plan', path: '/plan', id: 'plan' },
+    { label: 'Hogar', path: '/hogar', id: 'hogar' },
+  ]
   return (
-    <>
-      <div style={{ padding: '14px 28px 0', display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 600 }}>
-        <span>9:41</span>
-        <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor" opacity=".9"><rect x="0" y="6" width="3" height="5" rx="1" opacity=".3"/><rect x="4" y="4" width="3" height="7" rx="1" opacity=".5"/><rect x="8" y="2" width="3" height="9" rx="1" opacity=".7"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg>
-          <svg width="22" height="11" viewBox="0 0 22 11" fill="none" opacity=".9"><rect x=".5" y=".5" width="18" height="10" rx="2.5" stroke="currentColor" strokeOpacity=".35"/><rect x="2" y="2" width="12" height="7" rx="1.5" fill="currentColor"/></svg>
-        </div>
+    <div className="desktop-nav" style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: '0 auto' }}>
+      <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
+      <div style={{ display: 'flex', gap: 4 }}>
+        {items.map(item => (
+          <button key={item.id} onClick={() => navigate(item.path)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: active === item.id ? C.purple : C.text2, cursor: 'pointer', border: active === item.id ? '1px solid rgba(192,132,252,0.2)' : '1px solid transparent', background: active === item.id ? 'rgba(192,132,252,0.07)' : 'transparent', fontFamily: 'DM Sans, sans-serif' }}>{item.label}</button>
+        ))}
       </div>
-      <div style={{ width: 118, height: 32, background: '#000', borderRadius: '0 0 20px 20px', margin: '6px auto 0' }} />
-    </>
+      <div onClick={() => navigate('/perfil')} style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer', overflow: 'hidden' }}>
+        {usuario?.foto_url ? <img src={usuario.foto_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (usuario?.avatar_emoji || '👤')}
+      </div>
+    </div>
   )
 }
 
@@ -1057,224 +951,6 @@ function SeccionMiembros({ miembros, usuario, hogarActivo, expandido, setExpandi
   )
 }
 
-// ══════════════════════════════════════════════════════════════
-// DESKTOP VIEW
-// ══════════════════════════════════════════════════════════════
-
-function DesktopView({ hogarActivo, miembros, gastos, recurrentes, moneda, setMoneda, totalGastos, totalRecurrentes, miBalance, balances, deudas, fmt, formatFecha, navigate, usuario, onInvitar, onAgregarGasto, onAgregarRecurrente, onLiquidar }) {
-  if (!hogarActivo) return null
-  const balColor = miBalance > 0.5 ? C.green : miBalance < -0.5 ? C.red : C.text2
-  const balLabel = miBalance > 0.5 ? 'Te deben' : miBalance < -0.5 ? 'Debes' : 'Estás al día'
-
-  const navItems = [
-    { label: 'Inicio', path: '/home' },
-    { label: 'Gastos', path: '/movimientos' },
-    { label: 'Plan', path: '/plan' },
-    { label: 'Hogar', path: '/hogar', active: true },
-  ]
-
-  return (
-    <div style={{ width: 520, flexShrink: 0 }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 14 }}>
-        <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
-        <div style={{ display: 'flex', gap: 4 }}>
-          {navItems.map(item => (
-            <button 
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              style={{ 
-                padding: '7px 13px', 
-                borderRadius: 10, 
-                fontSize: 12, 
-                color: item.active ? C.purple : C.text2, 
-                cursor: 'pointer', 
-                border: item.active ? '1px solid rgba(192,132,252,0.2)' : 'none', 
-                background: item.active ? 'rgba(192,132,252,0.07)' : 'none', 
-                fontFamily: 'DM Sans, sans-serif' 
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        {usuario?.foto_url ? (
-          <img src={usuario.foto_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13 }}>
-            {usuario?.avatar_emoji || '🦊'}
-          </div>
-        )}
-      </div>
-
-      {/* Saldo Card Desktop */}
-      <div style={{ background: 'linear-gradient(135deg, rgba(192,132,252,0.17), rgba(96,165,250,0.1))', border: '1px solid rgba(192,132,252,0.22)', borderRadius: 22, padding: 20, marginBottom: 16, position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -40, right: -40, width: 130, height: 130, borderRadius: '50%', background: 'radial-gradient(circle, rgba(192,132,252,0.1), transparent)', pointerEvents: 'none' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-          <div>
-            <div style={{ fontSize: 10, color: C.text2, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 3 }}>{hogarActivo.emoji} {hogarActivo.nombre} · Tu balance</div>
-            <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 44, letterSpacing: '-0.03em', lineHeight: 1, color: balColor }}>{miBalance > 0.5 ? '+' : ''}{fmt(Math.abs(miBalance))}</div>
-            <div style={{ fontSize: 11, color: balColor, display: 'flex', alignItems: 'center', gap: 3, marginTop: 3 }}>{miBalance > 0.5 ? '↑' : miBalance < -0.5 ? '↓' : '✓'} {balLabel}</div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
-            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 3 }}>
-              {['COP', 'USD'].map(m => (
-                <div key={m} onClick={() => setMoneda(m)} style={{ padding: '4px 10px', borderRadius: 15, fontSize: 10.5, fontWeight: 600, cursor: 'pointer', color: moneda === m ? C.text : C.text2, background: moneda === m ? 'rgba(255,255,255,0.12)' : 'transparent' }}>{m}</div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {miembros.slice(0, 3).map((m, i) => (
-                <Avatar 
-                  key={m.id}
-                  usuario={m.usuario}
-                  size={26}
-                  marginRight={-7}
-                  bgColor={m.estado === 'pendiente' ? 'rgba(251,191,36,0.15)' : `rgba(${i % 2 === 0 ? '94,240,176' : '96,165,250'},0.2)`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
-          <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '11px 13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 10, color: C.text2 }}>Gastos ciclo</span>
-            <span style={{ fontSize: 15, fontWeight: 600, color: C.red }}>{fmt(totalGastos)}</span>
-          </div>
-          <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '11px 13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 10, color: C.text2 }}>Recurrentes/mes</span>
-            <span style={{ fontSize: 15, fontWeight: 600, color: C.amber }}>{fmt(totalRecurrentes)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid de recurrentes y gastos */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 13 }}>
-        {/* Recurrentes */}
-        <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 18, padding: 16 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Recurrentes</span>
-            <span onClick={onAgregarRecurrente} style={{ fontSize: 11, color: C.purple, cursor: 'pointer' }}>+ Añadir</span>
-          </div>
-          {recurrentes.length === 0 ? (
-            <div style={{ padding: 16, textAlign: 'center', color: C.text3, fontSize: 12 }}>Sin recurrentes</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-              {recurrentes.slice(0, 4).map(r => (
-                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, borderRadius: 14 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 10, background: `${r.categoria?.color_hex || C.blue}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>{r.categoria?.emoji || '📦'}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 500 }}>{r.nombre}</div>
-                    <div style={{ fontSize: 10, color: C.text2 }}>Día {new Date(r.fecha).getDate()}</div>
-                  </div>
-                  <div style={{ fontSize: 12.5, fontWeight: 600, color: C.red }}>{fmt(r.monto_cop)}</div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Gastos */}
-        <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 18, padding: 16 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Gastos ciclo</span>
-            <span onClick={onAgregarGasto} style={{ fontSize: 11, color: C.purple, cursor: 'pointer' }}>+ Agregar</span>
-          </div>
-          {gastos.length === 0 ? (
-            <div style={{ padding: 16, textAlign: 'center', color: C.text3, fontSize: 12 }}>Sin gastos</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-              {gastos.slice(0, 4).map(g => (
-                <div key={g.id} style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}`, borderRadius: 14 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 10, background: `${g.categoria?.color_hex || C.red}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>{g.categoria?.emoji || '🛒'}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 500 }}>{g.nombre}</div>
-                    <div style={{ fontSize: 10, color: C.text2 }}>{formatFecha(g.fecha)}</div>
-                  </div>
-                  <div style={{ fontSize: 12.5, fontWeight: 600, color: C.red }}>{fmt(g.monto_cop)}</div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Miembros desktop */}
-      <div style={{ marginTop: 13, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 18, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {miembros.slice(0, 3).map((m, i) => (
-            <Avatar 
-              key={m.id}
-              usuario={m.usuario}
-              size={28}
-              border={false}
-              marginRight={-8}
-              bgColor={`rgba(${i % 2 === 0 ? '94,240,176' : '96,165,250'},0.15)`}
-            />
-          ))}
-          <span style={{ marginLeft: 12, fontSize: 13, fontWeight: 500 }}>Miembros e invitaciones</span>
-          <span style={{ fontSize: 11, color: C.text2 }}>{miembros.filter(m => m.estado === 'activo').length} activos · {miembros.filter(m => m.estado === 'pendiente').length} pendiente</span>
-        </div>
-        <button onClick={onInvitar} style={{ padding: '6px 12px', background: 'rgba(192,132,252,0.1)', border: '1px solid rgba(192,132,252,0.2)', borderRadius: 8, fontSize: 11, color: C.purple, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>+ Invitar</button>
-      </div>
-    </div>
-  )
-}
-
-function DesktopEmpty({ onCrear, onUnirse, navigate, usuario }) {
-  const navItems = [
-    { label: 'Inicio', path: '/home' },
-    { label: 'Gastos', path: '/movimientos' },
-    { label: 'Plan', path: '/plan' },
-    { label: 'Hogar', path: '/hogar', active: true },
-  ]
-
-  return (
-    <div style={{ width: 520, flexShrink: 0 }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 20 }}>
-        <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.purple})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
-        <div style={{ display: 'flex', gap: 4 }}>
-          {navItems.map(item => (
-            <button 
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              style={{ 
-                padding: '7px 13px', 
-                borderRadius: 10, 
-                fontSize: 12, 
-                color: item.active ? C.purple : C.text2, 
-                cursor: 'pointer', 
-                border: item.active ? '1px solid rgba(192,132,252,0.2)' : 'none', 
-                background: item.active ? 'rgba(192,132,252,0.07)' : 'none', 
-                fontFamily: 'DM Sans, sans-serif' 
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        {usuario?.foto_url ? (
-          <img src={usuario.foto_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13 }}>
-            {usuario?.avatar_emoji || '🦊'}
-          </div>
-        )}
-      </div>
-
-      {/* Empty state */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', paddingTop: 60 }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🏠</div>
-        <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 28, marginBottom: 8 }}>Crea tu primer hogar</h2>
-        <p style={{ color: C.text2, fontSize: 14, marginBottom: 24, maxWidth: 320 }}>
-          Comparte gastos con tu pareja, roomies o familia. Cada quien aporta su parte.
-        </p>
-        <button onClick={onCrear} style={btnPrimary}>+ Crear hogar</button>
-        <button onClick={onUnirse} style={btnSecondary}>Tengo un código de invitación</button>
-      </div>
-    </div>
-  )
-}
 
 // ══════════════════════════════════════════════════════════════
 // MODALES Y COMPONENTES AUXILIARES
@@ -1650,10 +1326,10 @@ function BottomNav({ navigate, active = '' }) {
   ]
 
   return (
-    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
+    <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
       {items.map(item => (
         item.special ? (
-          <div key={item.id} onClick={() => navigate(item.path)} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)', fontSize: 20, color: C.bg }}>{item.icon}</div>
+          <div key={item.id} onClick={() => navigate(item.path)} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)', fontSize: 20, color: C.bg }}>+</div>
         ) : (
           <div key={item.id} onClick={() => navigate(item.path)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active === item.id ? C.purple : C.text3 }}>
             <span style={{ fontSize: 20 }}>{item.icon}</span>
