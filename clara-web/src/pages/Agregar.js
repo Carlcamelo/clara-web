@@ -96,8 +96,9 @@ export default function Agregar() {
         monto_total_cop: parseFloat(montoTotal),
         cuota_mensual_cop: parseFloat(cuotaMensual),
         cuotas_totales: parseInt(cuotasTotales) || 1,
-        cuotas_pagadas: 0,
+        monto_pagado_cop: 0,
         dia_pago: parseInt(diaPago) || null,
+        activa: true,
       })
       setLoading(false)
       if (error) { showToast('❌ Error al guardar'); return }

@@ -8,6 +8,8 @@ import Home from './pages/Home'
 import Agregar from './pages/Agregar'
 import Perfil from './pages/Perfil'
 import Movimientos from './pages/Movimientos'
+import Hogar from './pages/Hogar'
+import Plan from './pages/Plan'
 
 function App() {
   const [session, setSession] = useState(null)
@@ -50,7 +52,10 @@ function App() {
         <Route path="/agregar" element={session ? <Agregar /> : <Navigate to="/login" />} />
         <Route path="/perfil" element={session ? <Perfil /> : <Navigate to="/login" />} />
         <Route path="/movimientos" element={session ? <Movimientos /> : <Navigate to="/login" />} />
+        <Route path="/plan" element={session ? <Plan /> : <Navigate to="/login" />} />
         <Route path="*" element={<Navigate to={session ? "/home" : "/login"} />} />
+        <Route path="/plan" element={session ? <Plan /> : <Navigate to="/login" />} />
+        <Route path="/hogar" element={session ? <Hogar /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   )
