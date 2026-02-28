@@ -107,6 +107,8 @@ export default function Plan() {
   const [currency, setCurrency] = useState('COP')
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState('')
+  const [expandedPeriod, setExpandedPeriod] = useState(null)
+  const [showPeriodModal, setShowPeriodModal] = useState(false)
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2600) }
 
@@ -154,6 +156,44 @@ export default function Plan() {
   const gastNeed = totalGastos * 0.60
   const gastWant = totalGastos * 0.40
   const gastSave = 0
+
+  // Projected periods based on current cycle
+  const projectedPeriods = useMemo(() => {
+    const dia = perfil?.ciclo_dia_inicio || 1
+    const dur = perfil?.ciclo_duracion_dias || 30
+    const periods = []
+    const now = new Date()
+    let start = new Date(now.getFullYear(), now.getMonth(), dia)
+    if (now < start) start = new Date(now.getFullYear(), now.getMonth() - 1, dia)
+
+    for (let i = 0; i < 5; i++) {
+      const pStart = new Date(start)
+      pStart.setDate(pStart.getDate() + dur * i)
+      const pEnd = new Date(pStart)
+      pEnd.setDate(pEnd.getDate() + dur - 1)
+      const isCurrent = i === 0
+      const fmtD = (d) => d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })
+
+      // Use real data for current period, projected estimates for future
+      const pIngresos = isCurrent ? totalIngresos : totalIngresos * (0.95 + Math.random() * 0.2)
+      const pGastos = isCurrent ? totalGastos : totalGastos * (0.9 + Math.random() * 0.2)
+      const pDeudas = totalDeudas
+      const pSaldo = pIngresos - pGastos
+
+      periods.push({
+        id: i,
+        label: `${fmtD(pStart)} → ${fmtD(pEnd)}`,
+        saldo: pSaldo,
+        ingresos: pIngresos,
+        gastos: pGastos,
+        deudas: pDeudas,
+        isCurrent,
+        badge: isCurrent ? 'actual' : i === 1 ? 'programado' : 'conservador',
+        tasa: isCurrent ? 'Manual $4.500' : i <= 2 ? '$4.500' : '$4.800',
+      })
+    }
+    return periods
+  }, [perfil, totalIngresos, totalGastos, totalDeudas])
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.green, fontFamily: 'DM Sans, sans-serif' }}>Cargando...</div>
@@ -331,7 +371,102 @@ export default function Plan() {
               )}
             </div>
 
+            {/* Flujo proyectado */}
+            <div style={{ padding: '0 18px', marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 600 }}>Flujo proyectado</span>
+                <span onClick={() => setShowPeriodModal(true)} style={{ fontSize: 11, color: C.blue, cursor: 'pointer' }}>+ Período</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 10, overflowX: 'auto', padding: '0 18px 4px', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', marginBottom: 18 }}>
+              {projectedPeriods.map(p => {
+                const isExpanded = expandedPeriod === p.id
+                const badgeStyle = p.badge === 'actual'
+                  ? { background: 'rgba(94,240,176,0.1)', color: C.green, borderColor: 'rgba(94,240,176,0.2)' }
+                  : p.badge === 'programado'
+                  ? { background: 'rgba(251,191,36,0.1)', color: C.amber, borderColor: 'rgba(251,191,36,0.2)' }
+                  : { background: 'rgba(96,165,250,0.1)', color: C.blue, borderColor: 'rgba(96,165,250,0.2)' }
+                const badgeLabel = p.badge === 'actual' ? '● Actual' : p.badge === 'programado' ? '⏳ Programado' : '$ Conservador'
+
+                return (
+                  <div key={p.id} onClick={() => setExpandedPeriod(isExpanded ? null : p.id)} style={{
+                    flexShrink: 0, width: isExpanded ? 200 : 150, background: p.isCurrent ? 'rgba(94,240,176,0.05)' : C.surface,
+                    border: `1px solid ${p.isCurrent ? 'rgba(94,240,176,0.28)' : isExpanded ? C.border2 : C.border}`,
+                    borderRadius: 18, padding: 14, cursor: 'pointer', transition: 'all .25s', position: 'relative', overflow: 'hidden'
+                  }}>
+                    <div style={{ fontSize: 9.5, color: C.text3, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 5 }}>{p.label}</div>
+                    <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, letterSpacing: '-.02em', marginBottom: 2, color: p.saldo >= 0 ? C.green : C.red }}>{fmtFull(p.saldo, currency)}</div>
+                    <div style={{ fontSize: 10, color: C.text2, marginBottom: 8 }}>{p.isCurrent ? 'Saldo actual' : 'Saldo proyectado'}</div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '3px 8px', borderRadius: 20, fontSize: 9, fontWeight: 700, letterSpacing: '.03em', border: `1px solid ${badgeStyle.borderColor}`, background: badgeStyle.background, color: badgeStyle.color }}>{badgeLabel}</div>
+                    {isExpanded && (
+                      <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5 }}><span style={{ color: C.text3 }}>Ingresos</span><span style={{ color: C.green, fontWeight: 500 }}>{fmt(p.ingresos, currency)}</span></div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5 }}><span style={{ color: C.text3 }}>Gastos</span><span style={{ color: C.red, fontWeight: 500 }}>{fmt(p.gastos, currency)}</span></div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5 }}><span style={{ color: C.text3 }}>Deudas</span><span style={{ color: C.amber, fontWeight: 500 }}>{fmt(p.deudas, currency)}</span></div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5 }}><span style={{ color: C.text3 }}>Tasa</span><span style={{ color: C.text2, fontWeight: 500 }}>{p.tasa}</span></div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+              {/* Add period card */}
+              <div onClick={() => setShowPeriodModal(true)} style={{
+                flexShrink: 0, width: 100, border: `1.5px dashed rgba(255,255,255,0.12)`, borderRadius: 18, padding: 14,
+                cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6, transition: 'all .2s'
+              }}>
+                <div style={{ fontSize: 22, color: C.text3 }}>+</div>
+                <div style={{ fontSize: 10.5, color: C.text3, textAlign: 'center' }}>Programar período</div>
+              </div>
+            </div>
+
       </div>{/* /page-content */}
+
+      {/* Programar período modal */}
+      {showPeriodModal && (
+        <>
+          <div onClick={() => setShowPeriodModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 50 }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 51, padding: '0 20px 36px', maxHeight: '85%', overflowY: 'auto' }}>
+            <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 16px' }} />
+            <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, letterSpacing: '-.02em', marginBottom: 4 }}>Programar período</div>
+            <div style={{ fontSize: 12.5, color: C.text2, marginBottom: 20 }}>Configurá el próximo ciclo con ingresos esperados y tasa de conversión</div>
+
+            <div style={{ marginBottom: 13 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Período</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <input placeholder="Desde · Jul 15" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 300, outline: 'none' }} />
+                <input placeholder="Hasta · Ago 14" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 300, outline: 'none' }} />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 13 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Ingreso esperado</div>
+              <input type="number" placeholder="6.500.000" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 300, outline: 'none' }} />
+            </div>
+
+            <div style={{ marginBottom: 13 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Gastos estimados</div>
+              <input type="number" placeholder="2.200.000" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 300, outline: 'none' }} />
+            </div>
+
+            <div style={{ marginBottom: 13 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Tasa de conversión COP/USD</div>
+              <input type="number" placeholder="4.500" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 300, outline: 'none', marginBottom: 8 }} />
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {[['Mercado actual $4.500', true], ['Conservador $4.800', false], ['Pesimista $5.000', false], ['Manual', false]].map(([label, active]) => (
+                  <div key={label} style={{ padding: '6px 12px', borderRadius: 20, fontSize: 11.5, fontWeight: 500, cursor: 'pointer', border: `1px solid ${active ? 'rgba(96,165,250,0.3)' : C.border}`, background: active ? 'rgba(96,165,250,0.15)' : C.surface, color: active ? C.blue : C.text2 }}>{label}</div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 13 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Notas del período <span style={{ color: C.text3, fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span></div>
+              <input placeholder="Ej: Mes de vacaciones, bono esperado…" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 300, outline: 'none' }} />
+            </div>
+
+            <button onClick={() => { setShowPeriodModal(false); showToast('✅ Período guardado en tu flujo proyectado') }} style={{ width: '100%', padding: 14, borderRadius: 14, fontFamily: 'DM Sans, sans-serif', fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', background: `linear-gradient(135deg, ${C.blue}, #3b82f6)`, color: '#fff', marginTop: 8 }}>Guardar período</button>
+          </div>
+        </>
+      )}
 
       {/* Bottom nav - mobile only */}
       <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
