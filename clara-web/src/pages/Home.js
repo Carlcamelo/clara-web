@@ -210,8 +210,16 @@ export default function Home() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.green, fontFamily: 'DM Sans, sans-serif' }}>
-      Cargando...
+    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: 'DM Sans, sans-serif', padding: '60px 18px 90px' }}>
+      <style>{`@keyframes pulse{0%,100%{opacity:.06}50%{opacity:.13}}`}</style>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ height: 32, width: 140, borderRadius: 12, background: 'white', animation: 'pulse 1.4s ease infinite', marginBottom: 20 }} />
+        <div style={{ height: 180, borderRadius: 24, background: 'white', animation: 'pulse 1.4s ease infinite', marginBottom: 18 }} />
+        <div style={{ height: 80, borderRadius: 14, background: 'white', animation: 'pulse 1.4s ease infinite', marginBottom: 14 }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[1,2,3].map(i => <div key={i} style={{ height: 56, borderRadius: 14, background: 'white', animation: 'pulse 1.4s ease infinite', animationDelay: `${i*0.1}s` }} />)}
+        </div>
+      </div>
     </div>
   )
 

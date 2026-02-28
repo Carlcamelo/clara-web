@@ -307,7 +307,17 @@ export default function Perfil() {
   const isCard = metodoTipo === 'credito' || metodoTipo === 'debito'
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.purple, fontFamily: 'DM Sans, sans-serif' }}>Cargando...</div>
+    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: 'DM Sans, sans-serif', padding: '60px 18px 90px' }}>
+      <style>{`@keyframes pulse{0%,100%{opacity:.06}50%{opacity:.13}}`}</style>
+      <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'white', animation: 'pulse 1.4s ease infinite', marginBottom: 14 }} />
+        <div style={{ height: 22, width: 140, borderRadius: 10, background: 'white', animation: 'pulse 1.4s ease infinite', marginBottom: 8 }} />
+        <div style={{ height: 14, width: 200, borderRadius: 8, background: 'white', animation: 'pulse 1.4s ease infinite', marginBottom: 28 }} />
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[1,2,3,4,5].map(i => <div key={i} style={{ height: 56, borderRadius: 14, background: 'white', animation: 'pulse 1.4s ease infinite', animationDelay: `${i*0.08}s` }} />)}
+        </div>
+      </div>
+    </div>
   )
 
   return (
