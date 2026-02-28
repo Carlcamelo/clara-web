@@ -172,11 +172,34 @@ export default function Agregar() {
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.text, fontFamily: 'DM Sans, sans-serif' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap'); * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; } input::placeholder { color: rgba(238,242,255,0.28); }`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+        * { box-sizing: border-box; } ::-webkit-scrollbar { display: none; }
+        input::placeholder { color: rgba(238,242,255,0.28); }
+        .desktop-nav { display: none !important; }
+        .bottom-nav { display: flex !important; }
+        .mobile-back { display: flex; }
+        @media (min-width: 768px) {
+          .desktop-nav { display: flex !important; }
+          .bottom-nav { display: none !important; }
+          .mobile-back { display: none !important; }
+        }
+      `}</style>
       <Toast msg={toast} />
 
-      {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'rgba(8,13,26,0.95)', backdropFilter: 'blur(20px)', borderBottom: `1px solid ${C.border}`, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
+      {/* Desktop TopNav */}
+      <div className="desktop-nav" style={{ padding: '14px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 11 }}>
+        <span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 21, background: `linear-gradient(135deg, ${C.text}, ${C.green})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Clara</span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {[['Inicio', '/home'], ['Gastos', '/movimientos'], ['Plan', '/plan'], ['Hogar', '/hogar']].map(([label, to]) => (
+            <button key={label} onClick={() => navigate(to)} style={{ padding: '7px 13px', borderRadius: 10, fontSize: 12, color: C.text2, cursor: 'pointer', border: '1px solid transparent', background: 'transparent', fontFamily: 'DM Sans, sans-serif' }}>{label}</button>
+          ))}
+        </div>
+        <div style={{ width: 32, height: 32, borderRadius: '50%', background: `linear-gradient(135deg, ${C.blue}, ${C.purple})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>👤</div>
+      </div>
+
+      {/* Mobile Header */}
+      <div className="mobile-back" style={{ position: 'sticky', top: 0, zIndex: 10, background: 'rgba(8,13,26,0.95)', backdropFilter: 'blur(20px)', borderBottom: `1px solid ${C.border}`, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
         <div onClick={() => navigate('/home')} style={{ width: 36, height: 36, borderRadius: 12, background: C.surface, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </div>
@@ -367,8 +390,8 @@ export default function Agregar() {
 
       </div>
 
-      {/* Bottom nav */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 70, background: 'rgba(8,13,26,0.95)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-around', paddingTop: 8, zIndex: 10 }}>
+      {/* Bottom nav - mobile only */}
+      <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 70, background: 'rgba(8,13,26,0.95)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-around', paddingTop: 8, zIndex: 10 }}>
         {[
           { icon: '🏠', label: 'Inicio', to: '/home' },
           { icon: '📊', label: 'Gastos', to: '/movimientos' },
