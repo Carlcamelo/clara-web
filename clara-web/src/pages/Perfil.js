@@ -66,7 +66,7 @@ function Modal({ open, onClose, children }) {
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
       <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 480, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', border: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '92vh', display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
-        <div style={{ flex: 1, overflowY: 'auto', padding: '4px 20px 36px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '4px 20px 36px' }}>
           {children}
         </div>
       </div>
@@ -693,7 +693,7 @@ export default function Perfil() {
           <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
         </div>
         {[
-          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>, label: 'Plan', to: '/plan' },
+          { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, label: 'Hogar', to: '/hogar' },
           { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: 'Perfil', to: '/perfil', active: true },
         ].map(({ icon, label, to, active }) => (
           <div key={label} onClick={() => navigate(to)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active ? C.purple : C.text3 }}>

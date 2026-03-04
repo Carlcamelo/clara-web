@@ -967,7 +967,7 @@ function ModalGastoHogar({ visible, onClose, nombre, setNombre, monto, setMonto,
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-      <div style={{ padding: '4px 20px 36px', overflowY: 'auto' }}>
+      <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14, marginBottom: 3 }}><span style={{ fontSize: 22 }}>{hogar?.emoji || '🏠'}</span><div><h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, margin: 0 }}>Nuevo gasto</h2><div style={{ fontSize: 11, color: C.text2 }}>{hogar?.nombre}</div></div></div>
         <div style={{ textAlign: 'center', margin: '18px 0 14px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}><span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, color: C.text2 }}>-$</span><input value={monto} onChange={e => setMonto(e.target.value)} type="number" placeholder="0" autoFocus style={{ fontFamily: 'DM Serif Display, serif', fontSize: 40, background: 'none', border: 'none', color: C.text, outline: 'none', width: 180, textAlign: 'center', caretColor: C.purple }} /></div>{montoNum > 0 && <div style={{ fontSize: 11, color: C.text3, marginTop: 2 }}>≈ ${Math.round(montoNum / RATE).toLocaleString('en-US')} USD</div>}</div>
         <div style={{ marginBottom: 13 }}><div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Descripción</div><input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Ej: Mercado, Servicios…" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 13.5, fontWeight: 300, outline: 'none', boxSizing: 'border-box' }} /></div>
@@ -988,7 +988,7 @@ function ModalLiquidar({ visible, onClose, monto, setMonto, de, a, miembros, onL
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
       <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-      <div style={{ padding: '4px 20px 36px', overflowY: 'auto' }}>
+      <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>💸 Liquidar deuda</h2>
         <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>Registrar un pago entre miembros</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20, padding: 16, background: 'rgba(94,240,176,0.06)', border: '1px solid rgba(94,240,176,0.15)', borderRadius: 16 }}>
@@ -1014,7 +1014,7 @@ function ModalRecurrente({ visible, onClose, nombre, setNombre, monto, setMonto,
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
     <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-      <div style={{ padding: '4px 20px 36px', overflowY: 'auto' }}>
+      <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14, marginBottom: 3 }}><span style={{ fontSize: 22 }}>🔁</span><div><h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, margin: 0 }}>Nuevo recurrente</h2><div style={{ fontSize: 11, color: C.text2 }}>{hogar?.emoji} {hogar?.nombre}</div></div></div>
 
         <div style={{ textAlign: 'center', margin: '18px 0 14px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}><span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, color: C.text2 }}>$</span><input value={monto} onChange={e => setMonto(e.target.value)} type="number" placeholder="0" autoFocus style={{ fontFamily: 'DM Serif Display, serif', fontSize: 40, background: 'none', border: 'none', color: C.amber, outline: 'none', width: 180, textAlign: 'center', caretColor: C.amber }} /></div>{montoNum > 0 && <div style={{ fontSize: 11, color: C.text3, marginTop: 2 }}>≈ ${Math.round(montoNum / RATE).toLocaleString('en-US')} USD/mes</div>}</div>
@@ -1074,7 +1074,7 @@ function ModalCrearHogar({ visible, onClose, nombre, setNombre, emoji, setEmoji,
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
       <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-        <div style={{ padding: '4px 20px 36px', overflowY: 'auto' }}>
+        <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>Nuevo hogar</h2>
           <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>Centro de costos compartido</p>
 
@@ -1125,7 +1125,7 @@ function ModalInvitar({ visible, onClose, email, setEmail, rol, setRol, porcenta
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
       <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-        <div style={{ padding: '4px 20px 36px', overflowY: 'auto' }}>
+        <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>Invitar miembro</h2>
           <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>
             Invitar a {hogar?.emoji} {hogar?.nombre}
@@ -1244,7 +1244,7 @@ function ModalUnirse({ visible, onClose, codigo, setCodigo, onUnirse, guardando 
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
       <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-        <div style={{ padding: '4px 20px 36px', overflowY: 'auto' }}>
+        <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>Unirse a un hogar</h2>
           <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>
             Ingresá el código de invitación que te compartieron
@@ -1320,25 +1320,26 @@ function SettingsIcon() {
 }
 
 function BottomNav({ navigate, active = '' }) {
-  const items = [
-    { id: 'home', icon: '🏠', label: 'Inicio', path: '/home' },
-    { id: 'movimientos', icon: '📊', label: 'Gastos', path: '/movimientos' },
-    { id: 'agregar', icon: '+', label: '', path: '/agregar', special: true },
-    { id: 'plan', icon: '📅', label: 'Plan', path: '/plan' },
-    { id: 'hogar', icon: '🏡', label: 'Hogar', path: '/hogar' },
-  ]
-
   return (
-    <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
-      {items.map(item => (
-        item.special ? (
-          <div key={item.id} onClick={() => navigate(item.path)} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)', fontSize: 20, color: C.bg }}>+</div>
-        ) : (
-          <div key={item.id} onClick={() => navigate(item.path)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active === item.id ? C.purple : C.text3 }}>
-            <span style={{ fontSize: 20 }}>{item.icon}</span>
-            <span style={{ fontSize: 9.5 }}>{item.label}</span>
-          </div>
-        )
+    <div className="bottom-nav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 80, background: 'rgba(8,13,26,0.88)', backdropFilter: 'blur(30px)', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-around', paddingTop: 10, zIndex: 10 }}>
+      {[
+        { id: 'home', icon: <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>, label: 'Inicio', path: '/home' },
+        { id: 'movimientos', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, label: 'Gastos', path: '/movimientos' },
+      ].map(item => (
+        <div key={item.id} onClick={() => navigate(item.path)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active === item.id ? C.blue : C.text3 }}>
+          {item.icon}<span style={{ fontSize: 9.5 }}>{item.label}</span>
+        </div>
+      ))}
+      <div onClick={() => navigate('/agregar')} style={{ width: 44, height: 44, borderRadius: 14, background: `linear-gradient(135deg, ${C.green}, ${C.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginTop: -8, boxShadow: '0 6px 18px rgba(94,240,176,0.25)' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#080d1a" strokeWidth="2.5" width="20" height="20"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      {[
+        { id: 'hogar', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, label: 'Hogar', path: '/hogar' },
+        { id: 'perfil', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: 'Perfil', path: '/perfil' },
+      ].map(item => (
+        <div key={item.id} onClick={() => navigate(item.path)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer', padding: '4px 12px', color: active === item.id ? C.purple : C.text3 }}>
+          {item.icon}<span style={{ fontSize: 9.5 }}>{item.label}</span>
+        </div>
       ))}
     </div>
   )
