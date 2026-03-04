@@ -965,9 +965,9 @@ function ModalGastoHogar({ visible, onClose, nombre, setNombre, monto, setMonto,
   const ma = miembros.filter(m => m.estado === 'activo'); const n = ma.length || 1; const mitad = montoNum / n
   return (<>
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-    <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-      <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+    <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
+      <div style={{ flex: 1, minHeight: 0, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14, marginBottom: 3 }}><span style={{ fontSize: 22 }}>{hogar?.emoji || '🏠'}</span><div><h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, margin: 0 }}>Nuevo gasto</h2><div style={{ fontSize: 11, color: C.text2 }}>{hogar?.nombre}</div></div></div>
         <div style={{ textAlign: 'center', margin: '18px 0 14px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}><span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, color: C.text2 }}>-$</span><input value={monto} onChange={e => setMonto(e.target.value)} type="number" placeholder="0" autoFocus style={{ fontFamily: 'DM Serif Display, serif', fontSize: 40, background: 'none', border: 'none', color: C.text, outline: 'none', width: 180, textAlign: 'center', caretColor: C.purple }} /></div>{montoNum > 0 && <div style={{ fontSize: 11, color: C.text3, marginTop: 2 }}>≈ ${Math.round(montoNum / RATE).toLocaleString('en-US')} USD</div>}</div>
         <div style={{ marginBottom: 13 }}><div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Descripción</div><input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Ej: Mercado, Servicios…" style={{ width: '100%', padding: '12px 14px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, color: C.text, fontFamily: 'DM Sans, sans-serif', fontSize: 13.5, fontWeight: 300, outline: 'none', boxSizing: 'border-box' }} /></div>
@@ -986,9 +986,9 @@ function ModalLiquidar({ visible, onClose, monto, setMonto, de, a, miembros, onL
   const mDe = miembros.find(m => m.usuario_id === de); const mA = miembros.find(m => m.usuario_id === a); const montoNum = parseFloat(monto) || 0
   return (<>
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-    <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-      <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+    <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
+      <div style={{ flex: 1, minHeight: 0, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>💸 Liquidar deuda</h2>
         <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>Registrar un pago entre miembros</p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20, padding: 16, background: 'rgba(94,240,176,0.06)', border: '1px solid rgba(94,240,176,0.15)', borderRadius: 16 }}>
@@ -1012,9 +1012,9 @@ function ModalRecurrente({ visible, onClose, nombre, setNombre, monto, setMonto,
   const presets = [{ l: '50/50', v: 50 }, { l: '60/40', v: 60 }, { l: '70/30', v: 70 }, { l: '80/20', v: 80 }, { l: '100%', v: 100 }]
   return (<>
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-    <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-      <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+    <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
+      <div style={{ flex: 1, minHeight: 0, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14, marginBottom: 3 }}><span style={{ fontSize: 22 }}>🔁</span><div><h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, margin: 0 }}>Nuevo recurrente</h2><div style={{ fontSize: 11, color: C.text2 }}>{hogar?.emoji} {hogar?.nombre}</div></div></div>
 
         <div style={{ textAlign: 'center', margin: '18px 0 14px' }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}><span style={{ fontFamily: 'DM Serif Display, serif', fontSize: 24, color: C.text2 }}>$</span><input value={monto} onChange={e => setMonto(e.target.value)} type="number" placeholder="0" autoFocus style={{ fontFamily: 'DM Serif Display, serif', fontSize: 40, background: 'none', border: 'none', color: C.amber, outline: 'none', width: 180, textAlign: 'center', caretColor: C.amber }} /></div>{montoNum > 0 && <div style={{ fontSize: 11, color: C.text3, marginTop: 2 }}>≈ ${Math.round(montoNum / RATE).toLocaleString('en-US')} USD/mes</div>}</div>
@@ -1072,9 +1072,9 @@ function ModalCrearHogar({ visible, onClose, nombre, setNombre, emoji, setEmoji,
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-        <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
+        <div style={{ flex: 1, minHeight: 0, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>Nuevo hogar</h2>
           <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>Centro de costos compartido</p>
 
@@ -1123,9 +1123,9 @@ function ModalInvitar({ visible, onClose, email, setEmail, rol, setRol, porcenta
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-        <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
+        <div style={{ flex: 1, minHeight: 0, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>Invitar miembro</h2>
           <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>
             Invitar a {hogar?.emoji} {hogar?.nombre}
@@ -1242,9 +1242,9 @@ function ModalUnirse({ visible, onClose, codigo, setCodigo, onUnirse, guardando 
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0' }} />
-        <div style={{ flex: 1, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 420, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', borderTop: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '85%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
+        <div style={{ flex: 1, minHeight: 0, padding: '4px 20px 36px', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <h2 style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>Unirse a un hogar</h2>
           <p style={{ fontSize: 12.5, color: C.text2, marginBottom: 18 }}>
             Ingresá el código de invitación que te compartieron
