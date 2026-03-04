@@ -32,14 +32,20 @@ function fmtFull(n, currency = 'COP', rate = 4500) {
   return '$' + Math.abs(Math.round(n)).toLocaleString('es-CO')
 }
 
-function timeAgo(dateStr) {
-  const d = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now - d
-  const diffDays = Math.floor(diffMs / 86400000)
-  if (diffDays === 0) return 'Hoy'
-  if (diffDays === 1) return 'Ayer'
-  return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })
+function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function timeAgo(dateStr, hora) {
+  const hoy = localDateStr()
+  const ayerDate = new Date()
+  ayerDate.setDate(ayerDate.getDate() - 1)
+  const ayer = localDateStr(ayerDate)
+  const horaStr = hora ? ` · ${hora.slice(0, 5)}` : ''
+  if (dateStr === hoy) return `Hoy${horaStr}`
+  if (dateStr === ayer) return `Ayer${horaStr}`
+  const d = new Date(dateStr + 'T12:00:00')
+  return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) + horaStr
 }
 
 function getCycleInfo(diaInicio, duracion) {
@@ -439,7 +445,7 @@ export default function Home() {
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color }}>{esIngreso ? '+' : '-'}{fmtFull(monto, currency, RATE)}</div>
-                        <div style={{ fontSize: 10, color: C.text3, marginTop: 1 }}>{timeAgo(m.fecha)}</div>
+                        <div style={{ fontSize: 10, color: C.text3, marginTop: 1 }}>{timeAgo(m.fecha, m.hora)}</div>
                       </div>
                     </div>
                   )
