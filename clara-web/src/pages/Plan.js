@@ -122,8 +122,9 @@ export default function Plan() {
       setPerfil(p)
 
       const ciclo = getCycleInfo(p?.ciclo_dia_inicio || 1, p?.ciclo_duracion_dias || 30)
-      const desde = ciclo.start.toISOString().split('T')[0]
-      const hasta = ciclo.end.toISOString().split('T')[0]
+      const fmtLocal = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      const desde = fmtLocal(ciclo.start)
+      const hasta = fmtLocal(ciclo.end)
 
       const [{ data: g }, { data: i }, { data: deu }] = await Promise.all([
         supabase.from('gastos').select('*').eq('usuario_id', user.id).gte('fecha', desde).lte('fecha', hasta),

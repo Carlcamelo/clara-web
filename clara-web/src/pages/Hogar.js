@@ -435,7 +435,10 @@ export default function Hogar() {
     if (!hogarActivo) return
     setGuardando(true)
     try {
-      const { error } = await supabase.from('gastos').insert({ usuario_id: gastoPagadoPor || usuario.id, nombre: gastoNombre || 'Gasto del hogar', categoria_id: gastoCatId, monto_cop: -Math.abs(parseFloat(gastoMonto)), tasa_conversion: RATE, fecha: new Date().toISOString().split('T')[0], hora: new Date().toTimeString().slice(0, 5), hogar_id: hogarActivo.id, notas: gastoNotas, es_recurrente: false })
+      const now = new Date()
+      const fechaLocal = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+      const horaLocal = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+      const { error } = await supabase.from('gastos').insert({ usuario_id: gastoPagadoPor || usuario.id, nombre: gastoNombre || 'Gasto del hogar', categoria_id: gastoCatId, monto_cop: -Math.abs(parseFloat(gastoMonto)), tasa_conversion: RATE, fecha: fechaLocal, hora: horaLocal, hogar_id: hogarActivo.id, notas: gastoNotas, es_recurrente: false })
       if (error) throw error
       await recargarGastos(); setModalGasto(false); mostrarToast(`✅ Gasto agregado`)
     } catch (e) { console.error('Error guardando gasto:', e); mostrarToast('❌ Error al guardar') }
@@ -521,7 +524,8 @@ export default function Hogar() {
       const hoy = new Date()
       const fechaBase = new Date(hoy.getFullYear(), hoy.getMonth(), Math.min(dia, 28))
       const notasJson = JSON.stringify({ porcentaje: recMiPorcentaje })
-      const { error } = await supabase.from('gastos').insert({ usuario_id: recPagadoPor || usuario.id, nombre: recNombre || 'Recurrente', categoria_id: recCatId, monto_cop: -Math.abs(parseFloat(recMonto)), tasa_conversion: RATE, fecha: fechaBase.toISOString().split('T')[0], hora: '00:00', hogar_id: hogarActivo.id, es_recurrente: true, notas: notasJson })
+      const fechaLocalRec = `${fechaBase.getFullYear()}-${String(fechaBase.getMonth() + 1).padStart(2, '0')}-${String(fechaBase.getDate()).padStart(2, '0')}`
+      const { error } = await supabase.from('gastos').insert({ usuario_id: recPagadoPor || usuario.id, nombre: recNombre || 'Recurrente', categoria_id: recCatId, monto_cop: -Math.abs(parseFloat(recMonto)), tasa_conversion: RATE, fecha: fechaLocalRec, hora: '00:00', hogar_id: hogarActivo.id, es_recurrente: true, notas: notasJson })
       if (error) throw error
       await recargarGastos(); setModalRecurrente(false); mostrarToast(`✅ Recurrente "${recNombre || 'Recurrente'}" agregado`)
     } catch (e) { console.error('Error guardando recurrente:', e); mostrarToast('❌ Error al guardar') }

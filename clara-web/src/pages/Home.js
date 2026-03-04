@@ -175,8 +175,9 @@ export default function Home() {
       const diaInicio = p?.ciclo_dia_inicio || 1
       const duracion = p?.ciclo_duracion_dias || 30
       const ciclo = getCycleInfo(diaInicio, duracion)
-      const desde = ciclo.start.toISOString().split('T')[0]
-      const hasta = ciclo.end.toISOString().split('T')[0]
+      const fmtLocal = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      const desde = fmtLocal(ciclo.start)
+      const hasta = fmtLocal(ciclo.end)
 
       // Gastos del ciclo
       const { data: g } = await supabase

@@ -36,9 +36,15 @@ function getCycleInfo(diaInicio, duracion) {
   return { start, end, diasRestantes, diasTranscurridos, duracion }
 }
 
+function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 function labelFecha(fechaStr) {
-  const hoy = new Date().toISOString().split('T')[0]
-  const ayer = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+  const hoy = localDateStr()
+  const ayerDate = new Date()
+  ayerDate.setDate(ayerDate.getDate() - 1)
+  const ayer = localDateStr(ayerDate)
   if (fechaStr === hoy) return 'Hoy'
   if (fechaStr === ayer) return 'Ayer'
   const d = new Date(fechaStr + 'T12:00:00')
@@ -186,8 +192,8 @@ export default function Movimientos() {
       setPerfil(p)
 
       const ciclo = getCycleInfo(p?.ciclo_dia_inicio || 1, p?.ciclo_duracion_dias || 30)
-      const desde = ciclo.start.toISOString().split('T')[0]
-      const hasta = ciclo.end.toISOString().split('T')[0]
+      const desde = localDateStr(ciclo.start)
+      const hasta = localDateStr(ciclo.end)
 
       const [{ data: gastos }, { data: ingresos }] = await Promise.all([
         supabase.from('gastos').select('*').eq('usuario_id', user.id).gte('fecha', desde).lte('fecha', hasta).order('fecha', { ascending: false }).order('hora', { ascending: false }),

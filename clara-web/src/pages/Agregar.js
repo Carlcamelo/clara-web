@@ -26,6 +26,14 @@ function Inp({ label, ...props }) {
   )
 }
 
+function localDateStr(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function localTimeStr(d = new Date()) {
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
 export default function Agregar() {
   const navigate = useNavigate()
   const [tipo, setTipo] = useState('gasto')
@@ -35,8 +43,8 @@ export default function Agregar() {
   const [catId, setCatId] = useState(null)
   const [metodoPagoId, setMetodoPagoId] = useState(null)
   const [hogarId, setHogarId] = useState(null)
-  const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0])
-  const [hora, setHora] = useState(new Date().toTimeString().slice(0, 5))
+  const [fecha, setFecha] = useState(localDateStr())
+  const [hora, setHora] = useState(localTimeStr())
   const [notas, setNotas] = useState('')
   const [esRecurrente, setEsRecurrente] = useState(false)
   const [fuenteTrabajo, setFuenteTrabajo] = useState('')
@@ -169,7 +177,7 @@ export default function Agregar() {
         categoria_id: catId,
         monto_cop: Math.abs(montoCOP),
         tasa_conversion: RATE,
-        fecha,
+        fecha, hora,
         metodo_pago_id: metodoPagoId,
         fuente_trabajo: fuenteTrabajo,
         notas,
