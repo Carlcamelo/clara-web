@@ -64,9 +64,9 @@ function Modal({ open, onClose, children }) {
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', zIndex: 20 }} />
-      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 480, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', border: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '92vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 480, background: 'rgba(10,16,30,0.98)', borderRadius: '26px 26px 0 0', border: `1px solid ${C.border2}`, zIndex: 21, maxHeight: '92vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ width: 36, height: 4, borderRadius: 2, background: C.border2, margin: '12px auto 0', flexShrink: 0 }} />
-        <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '4px 20px 36px' }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', padding: '4px 20px 36px' }}>
           {children}
         </div>
       </div>
