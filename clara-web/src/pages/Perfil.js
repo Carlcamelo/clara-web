@@ -167,6 +167,10 @@ export default function Perfil() {
   const [prefNotif, setPrefNotif] = useState(true)
   const [prefBiom, setPrefBiom] = useState(true)
 
+  // API Token (Atajos iOS)
+  const [apiToken, setApiToken] = useState('')
+  const [modAtajos, setModAtajos] = useState(false)
+
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 2600) }
 
   useEffect(() => {
@@ -184,6 +188,7 @@ export default function Perfil() {
         setCicloDia(p.ciclo_dia_inicio || 1)
         setCicloDuracion(p.ciclo_duracion_dias || 30)
         if (p.foto_url) setFotoUrl(p.foto_url)
+        if (p.api_token) setApiToken(p.api_token)
       }
 
       const { data: m } = await supabase.from('metodos_pago').select('*').eq('usuario_id', user.id)
@@ -261,6 +266,18 @@ export default function Perfil() {
     await supabase.from('metodos_pago').delete().eq('id', id)
     setMetodos(m => m.filter(x => x.id !== id))
     showToast('🗑 Método eliminado')
+  }
+
+  async function generarToken() {
+    const token = crypto.randomUUID()
+    await supabase.from('usuarios').update({ api_token: token }).eq('id', user.id)
+    setApiToken(token)
+    setPerfil(p => ({ ...p, api_token: token }))
+    showToast('✅ Token generado')
+  }
+
+  function copiarTexto(text, label) {
+    navigator.clipboard.writeText(text).then(() => showToast(`📋 ${label} copiado`))
   }
 
   async function cerrarSesion() {
@@ -473,7 +490,13 @@ export default function Perfil() {
               <SRow icon="📤" bg="rgba(192,132,252,0.12)" title="Exportar datos" sub="CSV · PDF · Excel" onClick={() => showToast('📤 Exportar datos como CSV')} />
             </div>
 
-            {/* ⑥ Cuenta */}
+            {/* ⑥ Atajos iOS / Automatización */}
+            <div style={{ padding: '0 18px', marginBottom: 18 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10 }}>Automatización</div>
+              <SRow icon="⚡" bg="rgba(251,191,36,0.12)" title="Atajos de iOS" sub={apiToken ? 'Configurado · Toca para ver' : 'Registra gastos automáticamente'} onClick={() => setModAtajos(true)} />
+            </div>
+
+            {/* ⑦ Cuenta */}
             <div style={{ padding: '0 18px', marginBottom: 18 }}>
               <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10 }}>Cuenta</div>
               <SRow icon="📧" title="Email" sub={user?.email} onClick={() => showToast('📧 ' + user?.email)} />
@@ -675,6 +698,80 @@ export default function Perfil() {
             </div>
 
             <SaveBtn onClick={() => { setModTasa(false); showToast(`✅ Tasa $${tasa.toLocaleString('es-CO')} COP guardada`) }} label="Guardar tasa" color={C.blue} />
+          </Modal>
+
+          {/* ══ MODAL: Atajos iOS ══ */}
+          <Modal open={modAtajos} onClose={() => setModAtajos(false)}>
+            <div style={{ fontFamily: 'DM Serif Display, serif', fontSize: 22, marginBottom: 3, paddingTop: 14 }}>⚡ Atajos de iOS</div>
+            <div style={{ fontSize: 12.5, color: C.text2, marginBottom: 20 }}>Registra gastos automáticamente desde notificaciones de tu banco</div>
+
+            {/* Step 1: Token */}
+            <div style={{ marginBottom: 16 }}>
+              <MFL>1. Tu token personal</MFL>
+              {apiToken ? (
+                <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
+                  <div style={{ flex: 1, padding: '11px 13px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, fontFamily: 'monospace', fontSize: 11, color: C.green, wordBreak: 'break-all' }}>{apiToken}</div>
+                  <div onClick={() => copiarTexto(apiToken, 'Token')} style={{ padding: '11px 14px', borderRadius: 12, background: 'rgba(94,240,176,0.12)', border: '1px solid rgba(94,240,176,0.25)', color: C.green, fontSize: 12, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>Copiar</div>
+                </div>
+              ) : (
+                <button onClick={generarToken} style={{ width: '100%', padding: 13, borderRadius: 14, fontFamily: 'DM Sans, sans-serif', fontSize: 13, fontWeight: 600, cursor: 'pointer', border: `1px solid rgba(251,191,36,0.3)`, background: 'rgba(251,191,36,0.12)', color: C.amber }}>Generar token</button>
+              )}
+            </div>
+
+            {/* Step 2: URL */}
+            {apiToken && (
+              <>
+                <div style={{ marginBottom: 16 }}>
+                  <MFL>2. URL para el Atajo</MFL>
+                  <div onClick={() => copiarTexto(`${process.env.REACT_APP_SUPABASE_URL}/rest/v1/rpc/crear_gasto_rapido`, 'URL')} style={{ padding: '11px 13px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, fontFamily: 'monospace', fontSize: 10, color: C.blue, wordBreak: 'break-all', cursor: 'pointer' }}>
+                    {process.env.REACT_APP_SUPABASE_URL}/rest/v1/rpc/crear_gasto_rapido
+                    <span style={{ fontSize: 9, color: C.text3, display: 'block', marginTop: 4, fontFamily: 'DM Sans, sans-serif' }}>Toca para copiar</span>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 16 }}>
+                  <MFL>3. API Key</MFL>
+                  <div onClick={() => copiarTexto(process.env.REACT_APP_SUPABASE_ANON_KEY, 'API Key')} style={{ padding: '11px 13px', background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, fontFamily: 'monospace', fontSize: 10, color: C.purple, wordBreak: 'break-all', cursor: 'pointer' }}>
+                    {process.env.REACT_APP_SUPABASE_ANON_KEY?.slice(0, 20)}...
+                    <span style={{ fontSize: 9, color: C.text3, display: 'block', marginTop: 4, fontFamily: 'DM Sans, sans-serif' }}>Toca para copiar</span>
+                  </div>
+                </div>
+
+                {/* Instructions */}
+                <div style={{ marginBottom: 16 }}>
+                  <MFL>4. Configurar en Atajos de iOS</MFL>
+                  <div style={{ padding: '13px 14px', background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)', borderRadius: 14 }}>
+                    {[
+                      'Abrir app "Atajos" en tu iPhone',
+                      'Pestaña "Automatización" > + Nueva',
+                      'Disparador: "Notificación" de tu app bancaria',
+                      'Acción: "Obtener contenido de URL"',
+                      'Método: POST · URL: la de arriba',
+                      'Headers: apikey + Authorization (Bearer + API Key)',
+                      'Body JSON: { p_token, p_monto, p_descripcion }',
+                    ].map((step, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 9, marginBottom: i < 6 ? 8 : 0, fontSize: 11.5, color: C.text2, lineHeight: 1.4 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: C.amber, flexShrink: 0, width: 16 }}>{i + 1}.</span>
+                        <span>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Test */}
+                <div style={{ padding: '13px 14px', background: 'rgba(94,240,176,0.06)', border: '1px solid rgba(94,240,176,0.15)', borderRadius: 14, marginBottom: 4 }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: C.text3, marginBottom: 6 }}>Ejemplo del body JSON</div>
+                  <div onClick={() => copiarTexto(JSON.stringify({ p_token: apiToken, p_monto: 45000, p_descripcion: 'Rappi' }, null, 2), 'JSON de ejemplo')} style={{ fontFamily: 'monospace', fontSize: 11, color: C.green, cursor: 'pointer', lineHeight: 1.5 }}>
+                    {'{'}<br />
+                    &nbsp;&nbsp;"p_token": "{apiToken.slice(0, 8)}...",<br />
+                    &nbsp;&nbsp;"p_monto": 45000,<br />
+                    &nbsp;&nbsp;"p_descripcion": "Rappi"<br />
+                    {'}'}
+                    <span style={{ fontSize: 9, color: C.text3, display: 'block', marginTop: 4, fontFamily: 'DM Sans, sans-serif' }}>Toca para copiar ejemplo completo</span>
+                  </div>
+                </div>
+              </>
+            )}
           </Modal>
 
       </div>{/* /page-content */}
